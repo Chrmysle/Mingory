@@ -1,0 +1,25 @@
+<view class="page-shell sell-hub">
+  <view class="hub-header"><view><view class="page-title">卖货</view><view class="page-subtitle">连续扫码加入本次销售，最后整单结算</view></view><view class="operator" wx:if="{{user}}">{{user.name}}</view></view>
+
+  <view class="success-panel surface success-enter" wx:if="{{checkoutResult}}"><view class="success-mark">✓</view><view class="success-title">销售成功</view><view class="success-meta">共 {{checkoutResult.totalQuantity}} 件</view><view class="success-amount money-display">实收 ¥{{checkoutResult.amountDisplay}}</view><button class="success-button" bindtap="newSale">开始下一单</button></view>
+
+  <button class="scan-sale tap-target" bindtap="scanSale">扫码加入本次销售</button>
+  <view class="search-panel"><input class="search-input" value="{{keyword}}" bindinput="onInput" bindconfirm="search" confirm-type="search" placeholder="商品名称、规格、编号或条码"/><button class="search-button" bindtap="search" loading="{{searching}}">搜索</button></view>
+  <view class="search-results surface" wx:if="{{results.length}}"><view class="result-row tap-target" wx:for="{{results}}" wx:key="_id" data-id="{{item._id}}" bindtap="chooseProduct"><view class="result-main"><view class="result-name">{{item.name}}</view><view class="result-meta">{{item.variantLabel||item.productCode}} · {{item.stockDisplay}}</view></view><view class="result-price money-display">{{item.priceDisplay}}</view><view class="chevron">›</view></view></view>
+  <view class="search-empty" wx:if="{{searched&&!searching&&results.length===0}}">没有搜索结果，可尝试直接扫码</view>
+
+  <view class="section-row"><view><view class="section-title">本次销售</view><view class="section-caption">{{cartItems.length?'价格只影响本单':'扫描或搜索商品开始销售'}}</view></view><view class="text-link tap-target" wx:if="{{cartItems.length}}" bindtap="clearCart">清空本单</view></view>
+  <view class="cart surface" wx:if="{{cartItems.length}}">
+    <view class="cart-row" wx:for="{{cartItems}}" wx:key="variantId"><view class="cart-head"><view class="cart-title"><text>{{item.title}}</text><text class="gift-tag" wx:if="{{item.isGift}}">赠品</text></view><text class="line-total money-display">¥{{item.lineAmountDisplay}}</text></view><view class="cart-controls"><view class="quantity-control"><button data-id="{{item.variantId}}" data-delta="-1" bindtap="changeQuantity">−</button><text>{{item.quantity}}{{item.unit||''}}</text><button data-id="{{item.variantId}}" data-delta="1" bindtap="changeQuantity">＋</button></view><view class="price-control"><text>单价 ¥</text><input type="digit" value="{{item.unitPriceDisplay}}" disabled="{{item.isGift}}" data-id="{{item.variantId}}" bindblur="onPriceBlur"/></view><button class="gift-button {{item.isGift?'active':''}}" data-id="{{item.variantId}}" bindtap="toggleGift">{{item.isGift?'取消赠品':'设为赠品'}}</button></view></view>
+    <view class="cart-summary"><view><text>共 {{totalQuantity}} 件</text><text>挂单不锁定库存</text></view><view><text>合计</text><text class="money-display">¥{{totalAmountDisplay}}</text></view></view>
+    <view class="checkout-actions"><button class="secondary-button" bindtap="savePending" loading="{{savingPending}}" disabled="{{savingPending||submitting}}">挂单</button><button class="success-button" bindtap="submitOrder" loading="{{submitting}}" disabled="{{submitting||savingPending}}">{{submitting?'整单提交中…':'确认销售'}}</button></view>
+  </view>
+  <view class="cart-empty surface" wx:else><view>本次销售还是空的</view><view>连续扫描同一商品会自动增加数量</view></view>
+
+  <view class="section-row" wx:if="{{pendingSales.length||loadingPending}}"><view><view class="section-title">云端挂单</view><view class="section-caption">三台手机都能看到 · 不锁库存</view></view></view>
+  <view class="pending-list surface" wx:if="{{pendingSales.length}}"><view class="pending-row" wx:for="{{pendingSales}}" wx:key="_id"><view class="pending-main" data-index="{{index}}" bindtap="restorePending"><view class="pending-top"><text>{{item.displayLabel}}</text><text class="money-display">¥{{item.amountDisplay}}</text></view><view class="pending-meta">{{item.totalQuantity}}件 · {{item.itemCount}}种商品 · {{item.createdByName}}</view></view><button class="pending-delete" data-index="{{index}}" catchtap="removePending">删除</button></view></view>
+
+  <view class="section-row"><view><view class="section-title">今日最近销售</view><view class="section-caption">按一位顾客的一整单展示</view></view><view class="text-link tap-target" bindtap="openSales">全部记录</view></view>
+  <view class="recent-list surface" wx:if="{{recentSales.length}}"><view class="recent-row tap-target" wx:for="{{recentSales}}" wx:key="_id" data-id="{{item._id}}" bindtap="openOrder"><view class="recent-main"><view class="recent-name">{{item.itemCount||1}}种商品 · {{item.totalQuantity||item.quantity}}件</view><view class="recent-meta">{{item.operatorName||'未知操作人'}} · {{item.timeDisplay}}</view></view><view class="recent-amount money-display">¥{{item.totalAmountDisplay}}</view><view class="chevron">›</view></view></view>
+  <view class="compact-empty surface" wx:elif="{{!loadingRecent}}">今天还没有销售记录</view><view class="compact-loading" wx:else>正在读取最近销售…</view><view class="inline-error" wx:if="{{error}}">{{error}}</view>
+</view>

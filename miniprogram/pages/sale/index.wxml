@@ -1,0 +1,24 @@
+<view class="page-shell sale-page">
+  <view class="page-state" wx:if="{{loading}}">正在读取商品…</view><view class="page-state error-text" wx:elif="{{error}}">{{error}}</view>
+  <block wx:elif="{{product && variant}}">
+    <view class="success-panel surface success-enter" wx:if="{{result}}">
+      <view class="success-mark">✓</view><view class="success-title">销售成功</view>
+      <view class="success-product">{{product.name}}{{variant.specification?' · '+variant.specification:''}}</view>
+      <view class="success-total">¥{{result.amountDisplay}}</view>
+      <view class="success-meta"><text>销售数量 {{result.sale.quantity}}{{product.unit||''}}</text><text>剩余库存 {{result.remainingStock}}{{product.unit||''}}</text></view>
+      <block wx:if="{{source==='sell'}}"><button class="success-button" bindtap="backToSell">继续卖货</button><button class="secondary-button" bindtap="continueSale">再卖此商品</button></block><block wx:else><button class="success-button" bindtap="continueSale">再卖一件</button><button class="secondary-button" bindtap="backToProduct">返回商品</button></block>
+    </view>
+    <block wx:else>
+      <view class="product-context surface"><view class="name">{{product.name}}</view><view class="spec" wx:if="{{variant.specification}}">{{variant.specification}}</view><view class="context-grid"><view><text>当前库存</text><text>{{variant.stock}}{{product.unit||''}}</text></view><view><text>默认售价</text><text>¥{{defaultSalePriceDisplay}}</text></view></view></view>
+      <view class="sale-form surface">
+        <view class="label">销售数量</view>
+        <view class="quantity"><button bindtap="decrease">−</button><input type="number" value="{{quantity}}" bindinput="onQuantityInput"/><button bindtap="increase">＋</button></view>
+        <view class="divider"></view>
+        <view class="label">实际单价（元）</view><input class="price-input" type="digit" value="{{unitPrice}}" bindinput="onPriceInput"/>
+        <view class="total"><text>本次销售金额</text><text>¥{{totalAmountDisplay}}</text></view>
+      </view>
+      <button class="confirm success-button" bindtap="submit" loading="{{submitting}}" disabled="{{submitting}}">{{submitting?'销售中…':'确认销售'}}</button>
+      <view class="submit-hint">确认后将自动扣减该规格库存</view>
+    </block>
+  </block>
+</view>

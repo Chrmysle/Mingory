@@ -1,0 +1,9 @@
+{
+  "navigationBarTitleText": "统计",
+  "enablePullDownRefresh": true,
+  "backgroundTextStyle": "light",
+  "usingComponents": {
+    "line-chart": "/components/line-chart/index",
+    "donut-chart": "/components/donut-chart/index"
+  }
+}

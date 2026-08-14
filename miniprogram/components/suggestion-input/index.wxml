@@ -1,0 +1,8 @@
+<view class="suggestion-field">
+  <text class="label">{{label}}</text>
+  <input value="{{value}}" bindinput="onInput" maxlength="{{maxlength}}" placeholder="{{placeholder}}"/>
+  <view class="hint" wx:if="{{suggestions.length}}">{{value ? '匹配建议' : '最近使用'}}</view>
+  <view class="tags" wx:if="{{suggestions.length}}">
+    <button class="tag" wx:for="{{suggestions}}" wx:key="*this" data-value="{{item}}" bindtap="select">{{item}}</button>
+  </view>
+</view>

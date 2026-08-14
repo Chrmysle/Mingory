@@ -1,0 +1,23 @@
+.product-context,.operation-form,.success-panel { margin-bottom: 22rpx; padding: 30rpx; }
+.name { font-size: 40rpx; font-weight: 700; }
+.spec { display: inline-block; margin-top: 9rpx; padding: 5rpx 12rpx; border-radius: 8rpx; color: var(--color-primary); font-size: 24rpx; background: var(--color-primary-soft); }
+.context-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20rpx; margin-top: 24rpx; padding-top: 22rpx; border-top: 1rpx solid var(--color-border); }
+.context-grid view { display: flex; flex-direction: column; }
+.context-grid text:first-child { color: var(--color-text-tertiary); font-size: 23rpx; }
+.context-grid text:last-child { margin-top: 4rpx; font-size: 29rpx; font-weight: 600; }
+.field { margin-top: 28rpx; }
+.field:first-child { margin-top: 0; }
+.field > text { display: block; margin-bottom: 12rpx; color: var(--color-text-secondary); font-size: 27rpx; font-weight: 500; }
+.required { color: var(--color-danger); }
+.field input,.field textarea { box-sizing: border-box; width: 100%; min-height: 92rpx; padding: 0 22rpx; border-radius: var(--radius-sm); font-size: 32rpx; line-height: 92rpx; background: var(--color-surface-subtle); }
+.field textarea { height: 154rpx; padding-top: 17rpx; line-height: 1.5; }
+.stock-preview { display: flex; align-items: center; justify-content: space-between; margin: 28rpx 0 2rpx; padding: 22rpx; border-radius: var(--radius-sm); background: var(--color-success-soft); }
+.stock-preview > text:first-child { color: var(--color-success); font-size: 25rpx; }
+.stock-preview > text:last-child { font-size: 28rpx; font-weight: 600; }
+.stock-preview > text:last-child > text { color: var(--color-success); font-size: 36rpx; }
+.confirm { height: 104rpx; font-size: 31rpx; }
+.success-panel { text-align: center; }
+.success-mark { display: flex; align-items: center; justify-content: center; width: 82rpx; height: 82rpx; margin: 6rpx auto 18rpx; border-radius: 50%; color: #07150f; font-size: 46rpx; font-weight: 700; background: var(--color-success); }
+.success-title { font-size: 39rpx; font-weight: 700; }
+.success-stock { margin-top: 16rpx; color: var(--color-text-secondary); font-size: 29rpx; }
+.success-panel button { margin-top: 28rpx; }

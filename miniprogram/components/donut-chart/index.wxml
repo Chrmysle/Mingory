@@ -1,0 +1,4 @@
+<view class="donut-shell">
+  <canvas type="2d" id="donut" class="donut" bindtouchstart="selectSegment"></canvas>
+  <view class="center"><text>{{selected?selected.label:centerLabel}}</text><text>{{selected?selected.display:centerValue}}</text><text wx:if="{{selected}}">{{selected.shareDisplay}}</text></view>
+</view>

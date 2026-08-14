@@ -1,0 +1,14 @@
+.search-bar { display: flex; gap: 12rpx; }
+.search-input { min-width: 0; height: 92rpx; flex: 1; padding: 0 22rpx; border: 2rpx solid transparent; border-radius: var(--radius-sm); font-size: 29rpx; background: var(--color-surface); }
+.search-button { width: 142rpx; margin: 0; padding: 0; }
+.scan-button { margin: 14rpx 0 24rpx; }
+.result-list { padding: 0 26rpx; }
+.result-item { min-height: 176rpx; padding: 24rpx 0; border-bottom: 1rpx solid var(--color-border); transition: transform 120ms var(--ease-out), opacity 120ms ease; }
+.result-item:last-child { border-bottom: 0; }
+.result-top,.meta { display: flex; align-items: baseline; justify-content: space-between; gap: 20rpx; }
+.name { min-width: 0; flex: 1; font-size: 31rpx; font-weight: 600; }
+.price { flex: none; font-size: 30rpx; font-weight: 600; }
+.variant-label,.supplier { margin-top: 7rpx; color: var(--color-text-tertiary); font-size: 24rpx; }
+.match { display: inline-block; margin-top: 12rpx; padding: 6rpx 12rpx; border-radius: 8rpx; color: var(--color-primary); font-size: 23rpx; background: var(--color-primary-soft); }
+.meta { margin-top: 16rpx; color: var(--color-text-secondary); font-size: 24rpx; }
+.list-footer { padding: 42rpx 20rpx 10rpx; color: var(--color-text-tertiary); font-size: 24rpx; text-align: center; }

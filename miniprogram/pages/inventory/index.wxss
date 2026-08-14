@@ -1,0 +1,28 @@
+.inventory-hub { padding-top: 30rpx; }
+.stock-overview { display: grid; grid-template-columns: minmax(0, 1fr) 1rpx minmax(0, 1fr); align-items: center; margin-top: 30rpx; padding: 28rpx; }
+.overview-item { display: flex; flex-direction: column; }
+.overview-item:first-child { padding-right: 26rpx; }
+.overview-item:last-child { padding-left: 26rpx; }
+.overview-item text:first-child { color: var(--color-text-tertiary); font-size: 24rpx; }
+.overview-item text:last-child { margin-top: 4rpx; font-size: 48rpx; font-weight: 700; line-height: 1.15; }
+.overview-divider { width: 1rpx; height: 66rpx; background: var(--color-border); }
+.danger-number { color: var(--color-danger); }
+.warning-number { color: var(--color-warning); }
+.tool-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14rpx; }
+.tool { min-height: 124rpx; padding: 23rpx; border: 1rpx solid var(--color-border); border-radius: var(--radius-md); background: var(--color-surface); transition: transform 120ms var(--ease-out), opacity 120ms ease; }
+.tool text { display: block; }
+.tool text:first-child { font-size: 29rpx; font-weight: 650; }
+.tool text:last-child { margin-top: 6rpx; color: var(--color-text-tertiary); font-size: 23rpx; }
+.urgent-list { padding: 0 24rpx; }
+.urgent-row { display: grid; grid-template-columns: minmax(0, 1fr) 118rpx; gap: 18rpx; align-items: center; min-height: 142rpx; padding: 20rpx 0; border-bottom: 1rpx solid var(--color-border); }
+.urgent-row:last-child { border-bottom: 0; }
+.urgent-main { min-width: 0; }
+.urgent-name { overflow: hidden; font-size: 29rpx; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
+.urgent-stock { margin-top: 5rpx; color: var(--color-text-secondary); font-size: 24rpx; }
+.status { display: inline-flex; margin-top: 9rpx; padding: 4rpx 10rpx; border-radius: 999rpx; font-size: 21rpx; }
+.status.out { color: var(--color-danger); background: var(--color-danger-soft); }
+.status.low { color: var(--color-warning); background: var(--color-warning-soft); }
+.stock-button { width: 118rpx; min-height: 72rpx; margin: 0; padding: 0; color: #07121e; font-size: 26rpx; background: var(--color-primary); }
+.inline-error, .compact-loading { padding: 36rpx 8rpx; color: var(--color-danger); text-align: center; }
+.compact-loading { color: var(--color-text-tertiary); }
+.compact-empty { padding: 54rpx 22rpx; color: var(--color-text-tertiary); text-align: center; }

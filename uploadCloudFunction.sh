@@ -1,0 +1,13 @@
+${installPath} cloud functions deploy --e ${envId} --n login --r --project ${projectPath}
+${installPath} cloud functions deploy --e ${envId} --n createProduct --r --project ${projectPath}
+${installPath} cloud functions deploy --e ${envId} --n updateProduct --r --project ${projectPath}
+${installPath} cloud functions deploy --e ${envId} --n getProduct --r --project ${projectPath}
+${installPath} cloud functions deploy --e ${envId} --n searchProducts --r --project ${projectPath}
+${installPath} cloud functions deploy --e ${envId} --n getFieldSuggestions --r --project ${projectPath}
+${installPath} cloud functions deploy --e ${envId} --n saleProduct --r --project ${projectPath}
+${installPath} cloud functions deploy --e ${envId} --n stockIn --r --project ${projectPath}
+${installPath} cloud functions deploy --e ${envId} --n adjustStock --r --project ${projectPath}
+${installPath} cloud functions deploy --e ${envId} --n getInventoryLogs --r --project ${projectPath}
+${installPath} cloud functions deploy --e ${envId} --n getBusinessStatistics --r --project ${projectPath}
+${installPath} cloud functions deploy --e ${envId} --n getSales --r --project ${projectPath}
+${installPath} cloud functions deploy --e ${envId} --n getSale --r --project ${projectPath}

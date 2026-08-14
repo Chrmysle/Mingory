@@ -1,0 +1,16 @@
+<view class="page-shell">
+  <view class="page-state" wx:if="{{loading}}">正在读取库存…</view><view class="page-state error-text" wx:elif="{{error}}">{{error}}</view>
+  <block wx:else>
+    <view class="success-panel surface success-enter" wx:if="{{result}}"><view class="success-mark">✓</view><view class="success-title">{{type==='STOCKTAKE'?'盘点完成':'库存调整成功'}}</view><view class="success-stock">最新库存 {{result.currentStock}}{{product.unit||''}}</view><button class="primary-button" bindtap="back">返回商品</button></view>
+    <block wx:else>
+      <view class="product-context surface"><view class="name">{{product.name}}</view><view class="spec" wx:if="{{variant.specification}}">{{variant.specification}}</view><view class="current-stock"><text>当前库存</text><text>{{variant.stock}}{{product.unit||''}}</text></view></view>
+      <view class="operation-form surface">
+        <view class="label">调整方式</view><view class="type-tabs"><button class="{{type==='MANUAL_ADD'?'active add':''}}" data-type="MANUAL_ADD" bindtap="chooseType">增加</button><button class="{{type==='MANUAL_SUBTRACT'?'active subtract':''}}" data-type="MANUAL_SUBTRACT" bindtap="chooseType">减少</button><button class="{{type==='STOCKTAKE'?'active take':''}}" data-type="STOCKTAKE" bindtap="chooseType">盘点</button></view>
+        <view class="field" wx:if="{{type==='STOCKTAKE'}}"><text>实际库存 <text class="required">*</text></text><input type="number" value="{{actualStock}}" data-field="actualStock" bindinput="onInput" placeholder="请输入盘点后的实际数量"/></view><view class="field" wx:else><text>调整数量 <text class="required">*</text></text><input type="number" value="{{quantity}}" data-field="quantity" bindinput="onInput" placeholder="请输入正整数"/></view>
+        <view class="stock-preview"><text>库存变化</text><text>{{variant.stock}}{{product.unit||''}} → <text>{{afterStock}}{{afterStock==='--'?'':(product.unit||'')}}</text></text></view>
+        <view class="field"><text>原因/备注 <text class="required" wx:if="{{type!=='STOCKTAKE'}}">*</text></text><textarea value="{{remark}}" data-field="remark" bindinput="onInput" maxlength="500" placeholder="例如：商品损坏、库存录错"/></view>
+      </view>
+      <button class="confirm {{type==='MANUAL_SUBTRACT'?'danger-button':'primary-button'}}" loading="{{submitting}}" disabled="{{submitting}}" bindtap="submit">{{submitting?'处理中…':(type==='STOCKTAKE'?'确认盘点':'确认调整')}}</button>
+    </block>
+  </block>
+</view>

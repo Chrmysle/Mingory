@@ -1,0 +1,32 @@
+<view class="page-shell restock-page">
+  <view class="summary surface">
+    <view>
+      <view class="section-title">选择供货商</view>
+      <view class="summary-caption">看看这次应该补哪些商品</view>
+    </view>
+    <view class="summary-count"><text>{{totalRestockSkuCount}}</text><text>项待补</text></view>
+  </view>
+
+  <view class="page-state" wx:if="{{loading}}">正在整理补货清单…</view>
+  <view class="page-state" wx:elif="{{error}}">
+    <view class="page-state-title error-text">查询失败</view>
+    <view class="page-state-message">{{error}}</view>
+    <button class="secondary-button retry-button" bindtap="loadOverview">重新加载</button>
+  </view>
+  <view class="page-state surface empty-state" wx:elif="{{!suppliers.length}}">
+    <view class="page-state-title">还没有供货商</view>
+    <view class="page-state-message">请先在商品中填写供货来源</view>
+  </view>
+  <view class="supplier-list surface" wx:else>
+    <view class="supplier-row tap-target" wx:for="{{suppliers}}" wx:key="displayName" data-index="{{index}}" bindtap="openSupplier">
+      <view class="supplier-info">
+        <view class="supplier-name">{{item.displayName}}</view>
+        <view class="supplier-meta">{{item.productCount}} 款商品</view>
+      </view>
+      <view class="supplier-status {{item.restockSkuCount ? 'waiting' : 'normal'}}">
+        {{item.restockSkuCount ? item.restockSkuCount + '项待补' : '库存正常'}}
+      </view>
+      <view class="chevron">›</view>
+    </view>
+  </view>
+</view>

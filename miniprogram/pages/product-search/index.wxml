@@ -1,0 +1,21 @@
+<view class="page-shell">
+  <view class="search-bar">
+    <input class="search-input" value="{{keyword}}" bindinput="onInput" bindconfirm="submit" confirm-type="search" placeholder="名称、规格、编号或条码"/>
+    <button class="search-button primary-button" bindtap="submit">搜索</button>
+  </view>
+  <button class="scan-button secondary-button" bindtap="scanProduct">扫码查商品</button>
+
+  <view class="page-state error-text" wx:if="{{error}}"><view class="page-state-title error-text">搜索失败</view><view class="page-state-message">{{error}}</view></view>
+  <view class="page-state" wx:if="{{searched&&!loading&&!error&&list.length===0}}"><view class="page-state-title">没有找到匹配商品</view><view class="page-state-message">可换个关键词，或直接扫码查询</view></view>
+
+  <view class="result-list surface" wx:if="{{list.length}}">
+    <view class="result-item tap-target" wx:for="{{list}}" wx:key="_id" data-id="{{item._id}}" bindtap="open">
+      <view class="result-top"><view class="name">{{item.name}}</view><view class="price">{{item.priceDisplay}}</view></view>
+      <view class="variant-label" wx:if="{{item.variantLabel}}">{{item.variantLabel}}</view>
+      <view class="match" wx:if="{{item.matchedSpecificationsDisplay}}">匹配规格：{{item.matchedSpecificationsDisplay}}</view>
+      <view class="meta"><text>{{item.productCode}}</text><text>{{item.stockDisplay}}</text></view>
+      <view class="supplier">{{item.supplier||'未填写供货来源'}}</view>
+    </view>
+  </view>
+  <view class="list-footer" wx:if="{{loading}}">正在搜索…</view><view class="list-footer" wx:elif="{{list.length&&!hasMore}}">已显示全部结果</view>
+</view>

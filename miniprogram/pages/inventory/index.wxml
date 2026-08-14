@@ -1,0 +1,28 @@
+<view class="page-shell inventory-hub">
+  <view class="page-title">库存</view><view class="page-subtitle">缺什么、进什么、每次变化都能查清</view>
+
+  <view class="stock-overview surface">
+    <view class="overview-item"><text>缺货 SKU</text><text class="danger-number">{{outOfStockCount}}</text></view>
+    <view class="overview-divider"></view>
+    <view class="overview-item"><text>低库存 SKU</text><text class="warning-number">{{lowStockCount}}</text></view>
+  </view>
+
+  <view class="section-row"><view class="section-title">库存工具</view></view>
+  <view class="tool-grid">
+    <view class="tool tap-target" bindtap="openRestock"><text>进货助手</text><text>按供货商补货</text></view>
+    <view class="tool tap-target" bindtap="chooseStocktakeProduct"><text>库存盘点</text><text>选择商品核对</text></view>
+    <view class="tool tap-target" bindtap="openStockInRecords"><text>进货记录</text><text>只看商品入库</text></view>
+    <view class="tool tap-target" bindtap="openLogs"><text>库存流水</text><text>查看全部变化</text></view>
+  </view>
+
+  <view class="section-row"><view><view class="section-title">库存不足</view><view class="section-caption">优先显示最紧急的 5 项</view></view><view class="text-link tap-target" bindtap="openRestock">查看全部</view></view>
+  <view class="inline-error" wx:if="{{error}}">{{error}}</view>
+  <view class="urgent-list surface" wx:if="{{urgentItems.length}}">
+    <view class="urgent-row" wx:for="{{urgentItems}}" wx:key="variantId">
+      <view class="urgent-main"><view class="urgent-name">{{item.productName}}{{item.specification?' · '+item.specification:''}}</view><view class="urgent-stock">库存 {{item.stock}}{{item.unit||''}} / 预警 {{item.warningStock}}{{item.unit||''}}</view><view class="status {{item.statusClass}}">{{item.statusLabel}}</view></view>
+      <button class="stock-button" data-variant-id="{{item.variantId}}" bindtap="stockIn">入库</button>
+    </view>
+  </view>
+  <view class="compact-empty surface" wx:elif="{{!loading&&!error}}">目前没有需要补货的商品</view>
+  <view class="compact-loading" wx:elif="{{loading}}">正在读取最新库存…</view>
+</view>

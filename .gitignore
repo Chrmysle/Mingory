@@ -1,0 +1,15 @@
+# WeChat Developer Tools local settings
+project.private.config.json
+
+# Installed dependencies and generated packages
+node_modules/
+miniprogram_npm/
+
+# Local Codex/agent configuration
+.agents/
+skills-lock.json
+
+# Local operating-system and editor files
+.DS_Store
+Thumbs.db
+*.log

@@ -1,0 +1,50 @@
+<view class="container home-page">
+  <view class="home-header">
+    <view><view class="brand">Mingory</view><view class="subtitle" wx:if="{{status === 'ready'}}">你好，{{user.name}}</view><view class="subtitle" wx:else>轻量进销存，清楚每一笔生意</view></view>
+    <view class="ready-badge" wx:if="{{status === 'ready'}}">今日</view>
+  </view>
+
+  <view class="page-state surface" wx:if="{{status === 'loading'}}"><view class="page-state-title">正在连接云服务</view><view class="page-state-message">{{message}}</view></view>
+
+  <block wx:elif="{{status === 'ready'}}">
+    <view class="business-panel surface">
+      <view class="panel-header"><view class="section-title">今日经营</view><view class="detail-link tap-target" bindtap="openStatistics">查看详情</view></view>
+      <view class="statistics-state" wx:if="{{statisticsLoading&&!today}}">正在加载今日数据…</view>
+      <view class="statistics-state error-text" wx:elif="{{statisticsError&&!today}}">{{statisticsError}}</view>
+      <block wx:elif="{{today}}">
+        <view class="revenue-block"><text>今日营业额</text><text class="money-display">¥{{today.revenueDisplay}}</text></view>
+        <view class="metrics">
+          <view class="metric"><text>毛利润</text><text class="money-display {{today.grossProfitCent<0?'negative':'positive'}}">¥{{today.grossProfitDisplay}}</text></view>
+          <view class="metric"><text>销售数量</text><text>{{today.quantity}}</text></view>
+          <view class="metric"><text>商品成本</text><text class="money-display">¥{{today.costDisplay}}</text></view>
+          <view class="metric"><text>销售记录</text><text>{{today.saleCount}}笔</text></view>
+        </view>
+        <view class="refresh-error" wx:if="{{statisticsError}}">刷新失败：{{statisticsError}}</view>
+      </block>
+    </view>
+
+    <view class="section-heading"><view class="section-title">快捷操作</view><view class="section-caption">常用入口放在手边</view></view>
+    <view class="quick-grid">
+      <button class="quick-action primary" bindtap="scanSale">扫码卖货</button>
+      <button class="quick-action" bindtap="openSearch">搜索商品</button>
+      <button class="quick-action" bindtap="createProduct">新增商品</button>
+      <button class="quick-action" bindtap="openRestock">进货补货</button>
+    </view>
+
+    <view class="section-heading"><view><view class="section-title">库存提醒</view><view class="section-caption">缺货 {{outOfStockCount}} · 低库存 {{lowStockCount}}</view></view><view class="detail-link tap-target" bindtap="openInventory">查看全部</view></view>
+    <view class="compact-list surface" wx:if="{{urgentItems.length}}">
+      <view class="compact-row" wx:for="{{urgentItems}}" wx:key="variantId"><view><view class="row-name">{{item.productName}}{{item.specification?' · '+item.specification:''}}</view><view class="row-meta">库存 {{item.stock}}{{item.unit||''}} / 预警 {{item.warningStock}}{{item.unit||''}}</view></view><view class="row-status {{item.statusClass}}">{{item.statusLabel}}</view></view>
+    </view>
+    <view class="compact-empty surface" wx:else>目前没有需要补货的商品</view>
+
+    <view class="section-heading"><view class="section-title">今日最近销售</view><view class="detail-link tap-target" bindtap="openSales">全部销售</view></view>
+    <view class="compact-list surface" wx:if="{{recentSales.length}}">
+      <view class="compact-row tap-target" wx:for="{{recentSales}}" wx:key="_id" data-id="{{item._id}}" bindtap="openOrder"><view><view class="row-name">{{item.itemCount}}种商品 · {{item.totalQuantity}}件</view><view class="row-meta">{{item.firstProductName}}{{item.itemCount>1?' 等':''}} · {{item.timeDisplay}}</view></view><view class="sale-amount money-display">¥{{item.totalAmountDisplay}}</view></view>
+    </view>
+    <view class="compact-empty surface" wx:else>今天还没有销售记录</view>
+    <view class="refresh-error" wx:if="{{dashboardError}}">部分数据刷新失败：{{dashboardError}}</view>
+  </block>
+
+  <view class="page-state surface warning-state" wx:elif="{{status === 'unauthorized'}}"><view class="page-state-title">暂时无法使用</view><view class="page-state-message">{{message}}</view><view class="openid-box" wx:if="{{openid}}"><text class="openid-label">当前用户 OpenID</text><text class="openid-value" selectable="true">{{openid}}</text><button class="copy-button secondary-button" size="mini" bindtap="copyOpenId">复制 OpenID</button></view></view>
+  <view class="page-state surface" wx:else><view class="page-state-title error-text">初始化失败</view><view class="page-state-message">{{message}}</view></view>
+</view>

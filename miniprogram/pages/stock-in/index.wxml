@@ -1,0 +1,16 @@
+<view class="page-shell">
+  <view class="page-state" wx:if="{{loading}}">正在读取库存…</view><view class="page-state error-text" wx:elif="{{error}}">{{error}}</view>
+  <block wx:else>
+    <view class="success-panel surface success-enter" wx:if="{{result}}"><view class="success-mark">✓</view><view class="success-title">入库成功</view><view class="success-stock">最新库存 {{result.currentStock}}{{product.unit||''}}</view><button class="primary-button" bindtap="back">{{returnLabel}}</button></view>
+    <block wx:else>
+      <view class="product-context surface"><view class="name">{{product.name}}</view><view class="spec" wx:if="{{variant.specification}}">{{variant.specification}}</view><view class="context-grid"><view><text>当前库存</text><text>{{variant.stock}}{{product.unit||''}}</text></view><view><text>当前进货价</text><text>¥{{variant.costPriceDisplay}}</text></view></view></view>
+      <view class="operation-form surface">
+        <view class="field"><text>本次入库 <text class="required">*</text></text><input type="number" value="{{quantity}}" data-field="quantity" bindinput="onInput" placeholder="请输入正整数"/></view>
+        <view class="stock-preview"><text>库存变化</text><text>{{variant.stock}}{{product.unit||''}} → <text>{{afterStock}}{{afterStock==='--'?'':(product.unit||'')}}</text></text></view>
+        <view class="field"><text>新的进货价（元）</text><input type="digit" value="{{newCostPrice}}" data-field="newCostPrice" bindinput="onInput" placeholder="可不填，保持当前价格"/></view>
+        <view class="field"><text>备注</text><textarea value="{{remark}}" data-field="remark" bindinput="onInput" maxlength="500" placeholder="可不填，例如：供应商到货"/></view>
+      </view>
+      <button class="confirm success-button" loading="{{submitting}}" disabled="{{submitting}}" bindtap="submit">{{submitting?'入库中…':'确认入库'}}</button>
+    </block>
+  </block>
+</view>

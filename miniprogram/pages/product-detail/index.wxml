@@ -1,0 +1,21 @@
+<view class="page-shell">
+  <view class="page-state" wx:if="{{loading}}">正在加载商品…</view><view class="page-state error-text" wx:elif="{{error}}">{{error}}</view>
+  <block wx:else>
+    <image wx:if="{{product.imageFileID}}" class="product-image" src="{{product.imageFileID}}" mode="aspectFill"/>
+    <view class="product-header surface"><view class="name-line"><view class="name">{{product.name}}</view><view class="status {{product.enabled?'enabled':'disabled'}}">{{product.enabled?'启用中':'已停用'}}</view></view><view class="product-code" selectable="true">{{product.productCode}}</view><view class="info-grid"><view><text>供货来源</text><text>{{product.supplier||'未填写'}}</text></view><view><text>货架位置</text><text>{{product.shelfLocation||'未填写'}}</text></view></view><view class="remark" wx:if="{{product.remark}}">{{product.remark}}</view></view>
+
+    <view class="variants surface">
+      <view class="variants-heading"><view class="section-title">{{product.hasVariants?'商品规格':'价格与库存'}}</view><view class="section-caption">{{product.hasVariants?variants.length+' 个规格 · 点击展开':'普通商品'}}</view></view>
+      <view class="variant {{item._id===matchedVariantId?'matched':''}}" wx:for="{{variants}}" wx:key="_id" data-id="{{item._id}}" bindtap="toggleVariant">
+        <view class="matched-label" wx:if="{{item._id===matchedVariantId}}">扫码命中此规格</view>
+        <view class="variant-summary"><view class="variant-identity"><view class="variant-name">{{product.hasVariants?(item.specification||'未命名规格'):product.name}}</view><view class="variant-code">{{item.barcode?'条码 '+item.barcode:'无条码'}}{{item.enabled?'':' · 已停用'}}</view></view><view class="variant-right"><view class="price money-display">¥{{item.salePriceDisplay}}</view><view class="stock">库存 {{item.stock}}{{product.unit||''}} <text class="low-stock" wx:if="{{item.lowStock}}">不足</text></view><view class="expand-hint" wx:if="{{product.hasVariants}}">{{expandedVariantId===item._id?'收起':'查看操作'}}</view></view></view>
+        <view class="variant-detail" wx:if="{{expandedVariantId===item._id}}">
+          <view class="cost-row"><text>进货价</text><text class="money-display">¥{{item.costPriceDisplay}}</text></view><view class="suggest-title">按进价加价的建议售价</view><view class="suggestions"><view><text>20%</text><text>¥{{item.suggestedPrice20Display}}</text></view><view><text>25%</text><text>¥{{item.suggestedPrice25Display}}</text></view><view><text>30%</text><text>¥{{item.suggestedPrice30Display}}</text></view></view>
+          <button class="sell success-button" data-id="{{item._id}}" catchtap="sell" disabled="{{!product.enabled || !item.enabled || item.stock <= 0}}">{{item.stock <= 0 ? '库存为 0' : '加入本次销售'}}</button>
+          <view class="variant-actions"><button class="stock-in" data-id="{{item._id}}" catchtap="stockIn" disabled="{{!product.enabled || !item.enabled}}">入库</button><button class="adjust" data-id="{{item._id}}" catchtap="adjustStock" disabled="{{!product.enabled || !item.enabled}}">调整库存</button><button class="logs" data-id="{{item._id}}" catchtap="inventoryLogs">库存记录</button></view>
+        </view>
+      </view>
+    </view>
+    <button class="edit-button secondary-button" bindtap="edit">编辑商品资料</button>
+  </block>
+</view>

@@ -1,0 +1,5 @@
+<view class="chart-shell">
+  <canvas type="2d" id="chart" class="chart" bindtouchstart="selectPoint" bindtouchmove="selectPoint"></canvas>
+  <view class="tooltip" wx:if="{{selected}}" style="left:{{selected.tooltipLeft}}px"><text>{{selected.label}}</text><text>{{selected.valueDisplay}}</text></view>
+  <view class="empty" wx:if="{{ready&&!series.length}}">{{emptyText}}</view>
+</view>

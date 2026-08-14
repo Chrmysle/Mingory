@@ -1,0 +1,39 @@
+<view class="form-page">
+  <view class="form-section surface">
+    <view class="section-title">商品信息</view>
+    <view class="section-caption">先填写这款商品的公共信息</view>
+    <view class="field"><text>商品名称 <text class="required">*</text></text><input data-field="name" value="{{product.name}}" bindinput="onProductInput" maxlength="100" placeholder="例如：透明胶带"/></view>
+    <view class="field"><suggestion-input label="单位" field="unit" value="{{product.unit}}" placeholder="可不填，例如：瓶、盒、双" maxlength="20" presets="{{unitPresets}}" data-field="unit" bind:change="onProductSuggestion"/></view>
+    <view class="field"><suggestion-input label="供货来源" field="supplier" value="{{product.supplier}}" placeholder="可不填，也可以自由输入" data-field="supplier" bind:change="onProductSuggestion"/></view>
+  </view>
+
+  <view class="mode-row surface">
+    <view><view class="mode-title">多规格商品</view><view class="section-caption">同一商品有不同尺寸、型号或价格时开启</view></view>
+    <switch checked="{{hasVariants}}" bindchange="toggleVariants" color="#1769e0"/>
+  </view>
+
+  <view class="variant surface" wx:for="{{variants}}" wx:key="_key">
+    <view class="variant-head"><view><view class="section-title">{{hasVariants ? '规格 ' + (index + 1) : '价格与库存'}}</view><view class="section-caption" wx:if="{{!hasVariants}}">普通商品只需填写这一组</view></view><button wx:if="{{hasVariants && variants.length > 1}}" class="remove" data-index="{{index}}" bindtap="removeVariant">删除</button></view>
+    <view class="field" wx:if="{{hasVariants}}"><suggestion-input label="规格名称 *" field="specification" value="{{item.specification}}" placeholder="例如：5cm、42码" data-index="{{index}}" bind:change="onVariantSuggestion"/></view>
+    <view class="price-grid">
+      <view class="field"><text>进货价（元）<text class="required">*</text></text><input data-index="{{index}}" data-field="costPrice" value="{{item.costPrice}}" bindinput="onVariantInput" type="digit" placeholder="0.00"/></view>
+      <view class="field"><text>售价（元）<text class="required">*</text></text><input data-index="{{index}}" data-field="salePrice" value="{{item.salePrice}}" bindinput="onVariantInput" type="digit" placeholder="0.00"/></view>
+    </view>
+    <view class="price-grid">
+      <view class="field"><text>初始库存 <text class="required">*</text></text><input data-index="{{index}}" data-field="stock" value="{{item.stock}}" bindinput="onVariantInput" type="number"/></view>
+      <view class="field"><text>库存预警</text><input data-index="{{index}}" data-field="warningStock" value="{{item.warningStock}}" bindinput="onVariantInput" type="number" placeholder="可不填"/></view>
+    </view>
+    <view class="field"><text>条形码</text><view class="barcode-row"><input data-index="{{index}}" data-field="barcode" value="{{item.barcode}}" bindinput="onVariantInput" maxlength="64" placeholder="可手输或扫码"/><button class="scan-barcode" data-index="{{index}}" bindtap="scanVariantBarcode">扫码识别</button></view></view>
+    <view class="variant-tools" wx:if="{{hasVariants}}"><button wx:if="{{index > 0}}" data-index="{{index}}" bindtap="copyPrevious">复制上一规格价格</button><button data-index="{{index}}" bindtap="applyPricesToAll">价格应用到全部</button></view>
+  </view>
+  <button wx:if="{{hasVariants}}" class="add-variant secondary-button" bindtap="addVariant">添加规格</button>
+
+  <view class="form-section surface">
+    <view class="section-title">补充信息</view>
+    <view class="field"><suggestion-input label="货架位置" field="shelfLocation" value="{{product.shelfLocation}}" placeholder="可不填" data-field="shelfLocation" bind:change="onProductSuggestion"/></view>
+    <view class="field"><text>商品图片</text><button class="upload-button secondary-button" bindtap="chooseImage" loading="{{uploading}}">{{product.imageFileID?'重新上传':'选择图片'}}</button><image wx:if="{{product.imageFileID}}" class="preview" src="{{product.imageFileID}}" mode="aspectFill"/></view>
+    <view class="field"><text>备注</text><textarea data-field="remark" value="{{product.remark}}" bindinput="onProductInput" maxlength="500" placeholder="可不填"/></view>
+  </view>
+  <button class="submit primary-button" bindtap="submit" loading="{{submitting}}" disabled="{{submitting||uploading}}">保存商品</button>
+  <button class="continue secondary-button" bindtap="submitAndContinue" disabled="{{submitting||uploading}}">保存并继续新增</button>
+</view>

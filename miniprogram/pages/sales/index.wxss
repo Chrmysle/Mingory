@@ -1,0 +1,22 @@
+.page { min-height: 100vh; padding: 24rpx 28rpx 64rpx; }
+.filters { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 4rpx; padding: 6rpx; border-radius: 14rpx; background: var(--color-surface); }
+.filters button { min-width: 0; min-height: 70rpx; margin: 0; padding: 0; color: var(--color-text-secondary); font-size: 24rpx; font-weight: 500; background: transparent; }
+.filters .active { color: #07121e; font-weight: 600; background: var(--color-primary); }
+.custom { margin-top: 16rpx; padding: 22rpx; border: 1rpx solid var(--color-border); border-radius: var(--radius-md); background: var(--color-surface); }
+.custom > view { display: flex; align-items: center; justify-content: space-between; }
+.custom picker { flex: 1; padding: 20rpx 12rpx; border-radius: var(--radius-sm); text-align: center; background: var(--color-surface-subtle); }
+.custom text { padding: 0 12rpx; color: var(--color-text-tertiary); }
+.custom button { margin-top: 14rpx; color: #07121e; background: var(--color-primary); }
+.range { padding: 22rpx 4rpx 12rpx; color: var(--color-text-tertiary); font-size: 24rpx; }
+.sale-item { margin-bottom: 14rpx; padding: 25rpx 26rpx; border: 1rpx solid var(--color-border); border-radius: var(--radius-md); background: var(--color-surface); transition: transform 120ms var(--ease-out), opacity 120ms ease; }
+.sale-item:active { transform: scale(0.98); }
+.top,.middle,.meta { display: flex; justify-content: space-between; gap: 20rpx; }
+.name { font-size: 31rpx; font-weight: 600; }
+.spec { margin-top: 5rpx; color: var(--color-primary); font-size: 24rpx; }
+.amount { flex: none; font-size: 34rpx; font-weight: 700; }
+.middle { align-items: baseline; margin-top: 18rpx; color: var(--color-text-secondary); }
+.profit { color: var(--color-success); }
+.profit.negative { color: var(--color-danger); }
+.meta { margin-top: 15rpx; padding-top: 14rpx; border-top: 1rpx solid var(--color-border); color: var(--color-text-tertiary); font-size: 23rpx; }
+.error,.empty,.footer { padding: 70rpx 20rpx; color: var(--color-text-tertiary); text-align: center; }
+.error { color: var(--color-danger); }

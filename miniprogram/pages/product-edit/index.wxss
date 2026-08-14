@@ -1,0 +1,21 @@
+.form-page { padding: 24rpx 28rpx 70rpx; }
+.notice { margin-bottom: 22rpx; padding: 20rpx 22rpx; border-left: 6rpx solid var(--color-warning); border-radius: var(--radius-sm); color: var(--color-warning); font-size: 25rpx; background: var(--color-warning-soft); }
+.form-section,.variant { margin-bottom: 22rpx; padding: 28rpx; }
+.field { margin-top: 26rpx; }
+.field > text { display: block; margin-bottom: 12rpx; color: var(--color-text-secondary); font-size: 27rpx; font-weight: 500; }
+.required { color: var(--color-danger); }
+input,textarea { box-sizing: border-box; width: 100%; min-height: 92rpx; padding: 0 22rpx; border: 2rpx solid transparent; border-radius: var(--radius-sm); font-size: 31rpx; line-height: 92rpx; background: var(--color-surface-subtle); }
+textarea { height: 174rpx; padding-top: 18rpx; line-height: 1.5; }
+.variant-head { padding-bottom: 4rpx; }
+.stock { margin-top: 5rpx; color: var(--color-text-tertiary); font-size: 25rpx; }
+.price-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16rpx; }
+.barcode-row { display: flex; align-items: center; gap: 12rpx; }
+.barcode-row input { min-width: 0; flex: 1; }
+.scan-barcode { width: 170rpx; min-height: 92rpx; margin: 0; padding: 0; color: #07150f; font-size: 27rpx; background: var(--color-success); }
+.enabled-row { display: flex; align-items: center; justify-content: space-between; gap: 20rpx; margin-top: 26rpx; padding-top: 24rpx; border-top: 1rpx solid var(--color-border); }
+.variant-tools { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12rpx; margin-top: 22rpx; padding-top: 22rpx; border-top: 1rpx solid var(--color-border); }
+.variant-tools button { min-height: 78rpx; margin: 0; padding: 0 10rpx; color: var(--color-primary); font-size: 24rpx; background: var(--color-primary-soft); }
+.upload-button { margin: 0; }
+.preview { display: block; width: 184rpx; height: 184rpx; margin-top: 18rpx; border-radius: 12rpx; }
+.product-enabled { margin-top: 28rpx; }
+.submit { margin-top: 6rpx; }

@@ -1,0 +1,29 @@
+<view class="page-state" wx:if="{{loading}}">正在加载商品…</view><view class="page-state error-text" wx:elif="{{error}}">{{error}}</view>
+<view class="form-page" wx:else>
+  <view class="notice">商品编号和库存不能在普通编辑中修改；库存请通过入库或库存调整操作。</view>
+  <view class="form-section surface">
+    <view class="section-title">商品信息</view>
+    <view class="field"><text>商品名称 <text class="required">*</text></text><input data-field="name" value="{{product.name}}" bindinput="onProductInput"/></view>
+    <view class="field"><suggestion-input label="单位" field="unit" value="{{product.unit}}" placeholder="可清空" presets="{{unitPresets}}" data-field="unit" bind:change="onProductSuggestion"/></view>
+    <view class="field"><suggestion-input label="供货来源" field="supplier" value="{{product.supplier}}" placeholder="可不填" data-field="supplier" bind:change="onProductSuggestion"/></view>
+  </view>
+
+  <view class="variant surface" wx:for="{{variants}}" wx:key="_id">
+    <view class="variant-head"><view><view class="section-title">{{hasVariants ? '规格 ' + (index + 1) : '价格信息'}}</view><view class="stock">当前库存 {{item.stock}}{{product.unit||''}}</view></view></view>
+    <view class="field" wx:if="{{hasVariants}}"><suggestion-input label="规格名称 *" field="specification" value="{{item.specification}}" placeholder="例如：5cm、42码" data-index="{{index}}" bind:change="onVariantSuggestion"/></view>
+    <view class="price-grid"><view class="field"><text>进货价（元）<text class="required">*</text></text><input data-index="{{index}}" data-field="costPrice" value="{{item.costPrice}}" bindinput="onVariantInput" type="digit"/></view><view class="field"><text>售价（元）<text class="required">*</text></text><input data-index="{{index}}" data-field="salePrice" value="{{item.salePrice}}" bindinput="onVariantInput" type="digit"/></view></view>
+    <view class="field"><text>库存预警</text><input data-index="{{index}}" data-field="warningStock" value="{{item.warningStock}}" bindinput="onVariantInput" type="number" placeholder="可不填"/></view>
+    <view class="field"><text>条形码</text><view class="barcode-row"><input data-index="{{index}}" data-field="barcode" value="{{item.barcode}}" bindinput="onVariantInput" placeholder="可清空、手输或扫码"/><button class="scan-barcode" data-index="{{index}}" bindtap="scanVariantBarcode">扫码识别</button></view></view>
+    <view class="enabled-row"><view><view>启用此规格</view><view class="section-caption">停用后不能销售和调整库存</view></view><switch checked="{{item.enabled}}" data-index="{{index}}" bindchange="onVariantEnabled" color="#1769e0"/></view>
+    <view class="variant-tools" wx:if="{{hasVariants}}"><button wx:if="{{index>0}}" data-index="{{index}}" bindtap="copyPrevious">复制上一规格价格</button><button data-index="{{index}}" bindtap="applyPricesToAll">价格应用到全部</button></view>
+  </view>
+
+  <view class="form-section surface">
+    <view class="section-title">补充信息</view>
+    <view class="field"><suggestion-input label="货架位置" field="shelfLocation" value="{{product.shelfLocation}}" placeholder="可不填" data-field="shelfLocation" bind:change="onProductSuggestion"/></view>
+    <view class="field"><text>商品图片</text><button class="upload-button secondary-button" bindtap="chooseImage">{{product.imageFileID?'重新上传':'选择图片'}}</button><image wx:if="{{product.imageFileID}}" class="preview" src="{{product.imageFileID}}" mode="aspectFill"/></view>
+    <view class="field"><text>备注</text><textarea data-field="remark" value="{{product.remark}}" bindinput="onProductInput" placeholder="可不填"/></view>
+    <view class="enabled-row product-enabled"><view><view>启用商品</view><view class="section-caption">停用后全部规格都不能销售</view></view><switch checked="{{product.enabled}}" bindchange="onProductEnabled" color="#1769e0"/></view>
+  </view>
+  <button class="submit primary-button" bindtap="submit" loading="{{submitting}}" disabled="{{submitting||uploading}}">保存修改</button>
+</view>

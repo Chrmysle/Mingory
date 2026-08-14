@@ -1,0 +1,45 @@
+<view class="page-shell statistics-page">
+  <view class="page-title">经营统计</view><view class="page-subtitle">看清卖了多少、赚了多少、什么最好卖</view>
+  <view class="filters"><button class="{{type==='today'?'active':''}}" data-type="today" bindtap="choosePreset">今日</button><button class="{{type==='week'?'active':''}}" data-type="week" bindtap="choosePreset">本周</button><button class="{{type==='month'?'active':''}}" data-type="month" bindtap="choosePreset">本月</button><button class="{{type==='custom'?'active':''}}" data-type="custom" bindtap="choosePreset">自定义</button></view>
+  <view class="custom surface" wx:if="{{type==='custom'}}"><view><picker mode="date" value="{{startDate}}" data-field="startDate" bindchange="onDateChange"><view>{{startDate}}</view></picker><text>至</text><picker mode="date" value="{{endDate}}" data-field="endDate" bindchange="onDateChange"><view>{{endDate}}</view></picker></view><button class="primary-button" bindtap="applyCustom">查询</button></view>
+  <view class="range">经营范围 · {{rangeLabel}}</view>
+  <view class="page-state" wx:if="{{loading&&!summary}}">正在聚合经营数据…</view><view class="page-state error-text" wx:elif="{{error&&!summary}}">{{error}}</view><view class="inline-error" wx:if="{{error&&summary}}">经营数据刷新失败：{{error}}</view>
+
+  <block wx:if="{{summary}}">
+    <view class="summary-grid surface">
+      <view class="summary-cell emphasis"><text>营业额</text><text class="money-display">¥{{summary.revenueDisplay}}</text></view>
+      <view class="summary-cell"><text>毛利润</text><text class="money-display {{summary.grossProfitCent<0?'negative':'profit'}}">¥{{summary.grossProfitDisplay}}</text></view>
+      <view class="summary-cell"><text>商品成本</text><text class="money-display">¥{{summary.costDisplay}}</text></view>
+      <view class="summary-cell"><text>毛利率</text><text class="{{summary.grossProfitCent<0?'negative':'profit'}}">{{summary.grossMarginDisplay}}</text></view>
+      <view class="summary-cell"><text>销售数量</text><text>{{summary.quantity}}</text></view>
+      <view class="summary-cell"><text>销售笔数</text><text>{{summary.saleCount}}</text></view>
+    </view>
+
+    <view class="section-row"><view><view class="section-title">营业趋势</view><view class="section-caption">点击曲线查看具体日期</view></view><view class="mini-tabs"><text class="{{trendMetric==='revenue'?'active':''}}" data-metric="revenue" bindtap="chooseTrend">营业额</text><text class="{{trendMetric==='grossProfit'?'active':''}}" data-metric="grossProfit" bindtap="chooseTrend">毛利润</text></view></view>
+    <view class="chart-panel surface"><line-chart style="display:block;width:100%;max-width:100%;" series="{{trendSeries}}" color="{{trendMetric==='revenue'?'#4da3ff':'#39c58a'}}" fill-color="{{trendMetric==='revenue'?'rgba(77,163,255,0.12)':'rgba(57,197,138,0.12)'}}" value-type="money"/><view class="chart-note" wx:if="{{type==='today'}}">今日按整日汇总；周、月和自定义范围按北京时间逐日显示。</view></view>
+
+    <view class="section-row"><view><view class="section-title">销量趋势</view><view class="section-caption">销量高不一定代表营业额高</view></view></view>
+    <view class="chart-panel surface"><line-chart style="display:block;width:100%;max-width:100%;" series="{{quantitySeries}}" color="#f0a84b" fill-color="rgba(240,168,75,0.11)" value-type="quantity"/></view>
+
+    <view class="section-row"><view><view class="section-title">毛利率趋势</view><view class="section-caption">零营业额日期显示为空点</view></view></view>
+    <view class="chart-panel surface"><line-chart style="display:block;width:100%;max-width:100%;" series="{{marginSeries}}" color="#39c58a" fill-color="rgba(57,197,138,0.10)" value-type="percent"/></view>
+
+    <view class="section-row"><view><view class="section-title">热销排行</view><view class="section-caption">最多展示前 10 项</view></view><view class="mini-tabs"><text class="{{rankingLevel==='product'?'active':''}}" data-level="product" bindtap="chooseRankingLevel">按商品</text><text class="{{rankingLevel==='sku'?'active':''}}" data-level="sku" bindtap="chooseRankingLevel">按规格</text></view></view>
+    <view class="metric-tabs"><text class="{{rankingMetric==='quantity'?'active':''}}" data-metric="quantity" bindtap="chooseRankingMetric">销量</text><text class="{{rankingMetric==='revenue'?'active':''}}" data-metric="revenue" bindtap="chooseRankingMetric">销售额</text><text class="{{rankingMetric==='grossProfit'?'active':''}}" data-metric="grossProfit" bindtap="chooseRankingMetric">毛利润</text></view>
+    <view class="ranking-list surface" wx:if="{{rankingRows.length}}"><view class="ranking-row tap-target" wx:for="{{rankingRows}}" wx:key="key" data-product-id="{{item.productId}}" data-variant-id="{{rankingLevel==='sku'?item.variantId:''}}" bindtap="openRankingItem"><view class="rank">{{item.rank}}</view><view class="ranking-main"><view class="ranking-top"><text>{{item.title}}</text><text class="{{item.negative?'negative':''}}">{{item.valueDisplay}}</text></view><view class="ranking-meta">{{item.auxiliaryDisplay}}</view><view class="ranking-track"><view class="ranking-fill {{item.negative?'danger-fill':''}}" style="width:{{item.barWidth}}%"></view></view></view></view></view><view class="compact-empty surface" wx:else>该时间范围暂无商品排行</view>
+
+    <view class="section-row"><view><view class="section-title">销售额构成</view><view class="section-caption">Top 5 商品，其余归入“其他”</view></view></view>
+    <view class="composition surface"><donut-chart style="display:block;width:100%;max-width:300rpx;" items="{{composition}}" center-label="总销售额" center-value="¥{{summary.revenueDisplay}}"/><view class="composition-list"><view wx:for="{{composition}}" wx:key="key"><text class="composition-dot" style="background:{{item.color}}"></text><text>{{item.label}}</text><text>{{item.shareDisplay}}</text><text class="money-display">{{item.display}}</text></view></view></view>
+
+    <view class="current-divider"><text>以下为当前实时状态</text></view>
+    <view class="section-row"><view><view class="section-title">库存健康</view><view class="section-caption">不随上方经营时间范围变化</view></view><view class="text-link tap-target" bindtap="openInventory">库存中心</view></view>
+    <view class="health surface" wx:if="{{inventoryHealth}}"><view class="health-bar"><view class="normal-bar" style="width:{{inventoryHealth.normalWidth}}%"></view><view class="low-bar" style="width:{{inventoryHealth.lowWidth}}%"></view><view class="out-bar" style="width:{{inventoryHealth.outWidth}}%"></view></view><view class="health-grid"><view><text>库存正常</text><text>{{inventoryHealth.normal}}</text></view><view><text>库存不足</text><text class="warning">{{inventoryHealth.low}}</text></view><view><text>缺货</text><text class="negative">{{inventoryHealth.out}}</text></view></view><view class="health-unset" wx:if="{{inventoryHealth.unset}}">另有 {{inventoryHealth.unset}} 个 SKU 未设置预警库存，未计入状态比例。</view></view>
+
+    <view class="section-row"><view><view class="section-title">待补货供货商</view><view class="section-caption">先去找谁进货</view></view></view>
+    <view class="supplier-ranking surface" wx:if="{{supplierRanking.length}}"><view class="supplier-row tap-target" wx:for="{{supplierRanking}}" wx:key="displayName" data-index="{{index}}" bindtap="openSupplier"><view class="supplier-top"><text>{{item.displayName}}</text><text>{{item.restockSkuCount}}项待补</text></view><view class="supplier-track"><view style="width:{{item.barWidth}}%"></view></view></view></view><view class="compact-empty surface" wx:else>当前没有供货商需要补货</view>
+    <view class="inline-error" wx:if="{{liveError}}">实时库存数据刷新失败：{{liveError}}</view>
+
+    <view class="section-row"><view><view class="section-title">每日经营</view><view class="section-caption">点击日期查看当天销售</view></view></view>
+    <view class="daily-list surface"><view class="daily-row tap-target" wx:for="{{daily}}" wx:key="date" data-date="{{item.date}}" bindtap="openDay"><view class="daily-date"><text>{{item.dateDisplay}}</text><text>{{item.quantity}}件 · {{item.saleCount}}笔</text></view><view class="daily-value"><text class="money-display">营业额 ¥{{item.revenueDisplay}}</text><text class="money-display {{item.grossProfitCent<0?'negative':'profit'}}">毛利 ¥{{item.grossProfitDisplay}}</text></view><text class="chevron">›</text></view></view>
+  </block>
+</view>

@@ -1,0 +1,46 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/sell/index",
+    "pages/product-create/index",
+    "pages/product-list/index",
+    "pages/inventory/index",
+    "pages/product-search/index",
+    "pages/product-detail/index",
+    "pages/product-edit/index",
+    "pages/sale/index",
+    "pages/stock-in/index",
+    "pages/stock-adjust/index",
+    "pages/inventory-logs/index",
+    "pages/sales/index",
+    "pages/sale-detail/index",
+    "pages/business-statistics/index",
+    "pages/restock-suppliers/index",
+    "pages/restock-items/index"
+  ],
+  "window": {
+    "backgroundColor": "#111317",
+    "backgroundColorTop": "#111317",
+    "backgroundColorBottom": "#111317",
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#111317",
+    "navigationBarTitleText": "Mingory",
+    "navigationBarTextStyle": "white"
+  },
+  "tabBar": {
+    "color": "#858B96",
+    "selectedColor": "#4DA3FF",
+    "backgroundColor": "#17191D",
+    "borderStyle": "black",
+    "list": [
+      { "pagePath": "pages/index/index", "text": "首页", "iconPath": "images/tabbar/home.png", "selectedIconPath": "images/tabbar/home-active.png" },
+      { "pagePath": "pages/sell/index", "text": "卖货", "iconPath": "images/tabbar/sell.png", "selectedIconPath": "images/tabbar/sell-active.png" },
+      { "pagePath": "pages/product-list/index", "text": "商品", "iconPath": "images/tabbar/product.png", "selectedIconPath": "images/tabbar/product-active.png" },
+      { "pagePath": "pages/inventory/index", "text": "库存", "iconPath": "images/tabbar/inventory.png", "selectedIconPath": "images/tabbar/inventory-active.png" },
+      { "pagePath": "pages/business-statistics/index", "text": "统计", "iconPath": "images/tabbar/statistics.png", "selectedIconPath": "images/tabbar/statistics-active.png" }
+    ]
+  },
+  "sitemapLocation": "sitemap.json",
+  "style": "v2",
+  "lazyCodeLoading": "requiredComponents"
+}
