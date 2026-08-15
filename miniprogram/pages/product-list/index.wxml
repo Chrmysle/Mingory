@@ -3,14 +3,14 @@
   <view class="search-entry surface tap-target" bindtap="search"><text>搜索商品名称、规格、编号或条码</text><text>搜索</text></view>
   <view class="top-actions"><button class="secondary-button" bindtap="scanProduct">扫码查商品</button><button class="primary-button" bindtap="create">新增商品</button></view>
 
-  <view class="section-row"><view class="section-title">全部商品</view><view class="section-caption" wx:if="{{list.length}}">已加载 {{list.length}} 款</view></view>
+  <view class="section-row"><view><view class="section-title">全部商品</view><view class="section-caption" wx:if="{{list.length}}">已加载 {{list.length}} 款</view></view><view class="text-link tap-target" bindtap="openArchive">归档商品</view></view>
   <view class="page-state error-text" wx:if="{{error}}"><view class="page-state-title error-text">加载失败</view><view class="page-state-message">{{error}}</view></view>
   <view class="page-state" wx:if="{{!loading&&!error&&list.length===0}}"><view class="page-state-title">还没有商品</view><view class="page-state-message">点击“新增商品”录入第一件商品</view></view>
 
   <view class="product-list surface" wx:if="{{list.length}}">
     <view class="product-item tap-target" wx:for="{{list}}" wx:key="_id" data-id="{{item._id}}" bindtap="open">
       <image class="thumb" src="{{item.imageFileID||'/images/default-goods-image.png'}}" mode="aspectFill"/>
-      <view class="product-main"><view class="name-line"><view class="name">{{item.name}}</view><view class="disabled" wx:if="{{!item.enabled}}">已停用</view></view><view class="spec">{{item.variantLabel||item.productCode}}</view><view class="location">{{item.shelfLocation||'未填写货架位置'}}</view></view>
+      <view class="product-main"><view class="name-line"><view class="name">{{item.name}}</view></view><view class="spec">{{item.variantLabel||item.productCode}}</view><view class="location">{{item.shelfLocation||'未填写货架位置'}}</view></view>
       <view class="summary"><text class="price money-display">{{item.priceDisplay}}</text><text class="stock">{{item.stockDisplay}}</text></view>
     </view>
   </view>

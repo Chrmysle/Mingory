@@ -34,7 +34,6 @@
 .product-main { min-width: 0; flex: 1; }
 .name-line { display: flex; align-items: center; gap: 10rpx; }
 .name { overflow: hidden; font-size: 31rpx; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
-.disabled { flex: none; padding: 3rpx 10rpx; border-radius: 999rpx; color: var(--color-danger); font-size: 21rpx; background: var(--color-danger-soft); }
 .spec, .location { margin-top: 6rpx; overflow: hidden; color: var(--color-text-tertiary); font-size: 23rpx; text-overflow: ellipsis; white-space: nowrap; }
 .summary { display: flex; flex: none; flex-direction: column; align-items: flex-end; gap: 8rpx; }
 .price { font-size: 29rpx; font-weight: 600; }

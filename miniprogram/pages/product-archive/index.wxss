@@ -1,0 +1,10 @@
+.archive-page { padding-top: 30rpx; }
+.archive-list { margin-top: 28rpx; padding: 0 24rpx; }
+.archive-item { display: flex; align-items: center; gap: 20rpx; min-height: 166rpx; padding: 22rpx 0; border-bottom: 1rpx solid var(--color-border); transition: transform 120ms var(--ease-out), opacity 120ms ease; }
+.archive-item:last-child { border-bottom: 0; }
+.thumb { width: 112rpx; height: 112rpx; flex: none; border-radius: 12rpx; background: var(--color-surface-subtle); }
+.archive-main { min-width: 0; flex: 1; }
+.name { overflow: hidden; font-size: 30rpx; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
+.code,.time { margin-top: 5rpx; color: var(--color-text-tertiary); font-size: 23rpx; }
+.chevron { flex: none; color: var(--color-text-tertiary); font-size: 40rpx; }
+.list-footer { padding: 42rpx 20rpx 10rpx; color: var(--color-text-tertiary); font-size: 24rpx; text-align: center; }

@@ -10,7 +10,6 @@ Page({
   onProductSuggestion(e){this.setData({[`product.${e.currentTarget.dataset.field}`]:e.detail.value});},
   onVariantInput(e){this.setData({[`variants[${e.currentTarget.dataset.index}].${e.currentTarget.dataset.field}`]:e.detail.value});},
   onVariantSuggestion(e){this.setData({[`variants[${e.currentTarget.dataset.index}].specification`]:e.detail.value});},
-  onProductEnabled(e){this.setData({"product.enabled":e.detail.value});},
   onVariantEnabled(e){this.setData({[`variants[${e.currentTarget.dataset.index}].enabled`]:e.detail.value});},
   async load(){
     try{
@@ -27,7 +26,7 @@ Page({
   async submit(){
     if(this.data.submitting||this.data.uploading)return;
     let payload;
-    try{payload=toProductPayload(this.data.product,this.data.variants,this.data.hasVariants,false);payload.product.enabled=this.data.product.enabled;}
+    try{payload=toProductPayload(this.data.product,this.data.variants,this.data.hasVariants,false);}
     catch(error){wx.showToast({title:error.message,icon:"none"});return;}
     this.setData({submitting:true});
     try{await productService.updateProduct({productId:this.productId,product:payload.product,variants:payload.variants});wx.showToast({title:"保存成功"});setTimeout(()=>wx.navigateBack(),500);}catch(error){wx.showToast({title:error.message,icon:"none"});}finally{this.setData({submitting:false});}

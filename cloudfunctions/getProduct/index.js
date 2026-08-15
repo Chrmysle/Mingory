@@ -23,7 +23,7 @@ exports.main = async (event) => {
         const result = await db.collection("product_variants").where({ barcode:String(input.barcode).trim() }).limit(1).get();
         variant = result.data[0];
       }
-      if (!variant) return fail("PRODUCT_NOT_FOUND", "商品规格不存在");
+      if (!variant || variant.enabled !== true) return fail("PRODUCT_NOT_FOUND", "商品规格不存在或已停用");
       productId = variant.productId;
       matchedVariantId = variant._id;
     } else if (key === "productCode") {
@@ -35,6 +35,7 @@ exports.main = async (event) => {
     let product;
     try { product = (await db.collection("products").doc(productId).get()).data; } catch (_) { product = null; }
     if (!product) return fail("PRODUCT_NOT_FOUND", "商品不存在");
+    if (key !== "productId" && product.enabled !== true) return fail("PRODUCT_NOT_FOUND", "商品不存在或已停用");
     const variants = await db.collection("product_variants").where({ productId }).orderBy("variantCode", "asc").limit(50).get();
     if (!variants.data.length) return fail("PRODUCT_NOT_FOUND", "商品缺少可用规格数据");
     return { success:true, data:{ product, variants:variants.data, matchedVariantId }, message:"" };

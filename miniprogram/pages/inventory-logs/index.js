@@ -2,7 +2,7 @@ const inventoryService = require("../../services/inventory");
 const { formatDateTime } = require("../../utils/date");
 const { formatCent } = require("../../utils/money");
 
-const TYPE_LABELS = { SALE: "销售出库", STOCK_IN: "商品入库", MANUAL_ADD: "人工增加", MANUAL_SUBTRACT: "人工减少", STOCKTAKE: "盘点调整" };
+const TYPE_LABELS = { SALE: "销售出库", SALE_CANCEL: "销售撤销", STOCK_IN: "商品入库", MANUAL_ADD: "人工增加", MANUAL_SUBTRACT: "人工减少", STOCKTAKE: "盘点调整" };
 const withDisplay = (item) => ({
   ...item,
   typeLabel: TYPE_LABELS[item.type] || item.type,

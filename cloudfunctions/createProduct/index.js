@@ -89,7 +89,7 @@ exports.main = async (event) => {
       const sequence = (counter.data && Number.isSafeInteger(counter.data.value) ? counter.data.value : 0) + 1;
       const productCode = formatProductCode(sequence);
       await counterRef.set({ data:{ value:sequence, updatedAt:now } });
-      const product = { productCode, ...productInput, enabled:true, hasVariants:input.hasVariants, createdBy:openid, createdByName:user.name, updatedBy:openid, updatedByName:user.name, createdAt:now, updatedAt:now };
+      const product = { productCode, ...productInput, enabled:true, status:"active", hasVariants:input.hasVariants, createdBy:openid, createdByName:user.name, updatedBy:openid, updatedByName:user.name, createdAt:now, updatedAt:now };
       const productResult = await transaction.collection("products").add({ data:product });
       const variants = [];
       for (let index = 0; index < variantsInput.length; index += 1) {

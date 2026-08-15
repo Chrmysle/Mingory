@@ -4,6 +4,7 @@
     "pages/sell/index",
     "pages/product-create/index",
     "pages/product-list/index",
+    "pages/product-archive/index",
     "pages/inventory/index",
     "pages/product-search/index",
     "pages/product-detail/index",
