@@ -1,7 +1,10 @@
 {
   "navigationBarTitleText": "统计",
+  "backgroundColor": "#FFFFFF",
+  "backgroundColorTop": "#FFFFFF",
+  "backgroundColorBottom": "#FFFFFF",
   "enablePullDownRefresh": true,
-  "backgroundTextStyle": "light",
+  "backgroundTextStyle": "dark",
   "usingComponents": {
     "line-chart": "/components/line-chart/index",
     "donut-chart": "/components/donut-chart/index"

@@ -26,19 +26,16 @@ exports.main = async (event) => {
   const { OPENID: openid } = cloud.getWXContext();
   if (!openid) return fail("UNAUTHORIZED", "无法识别当前微信用户");
   const input = event || {};
-  if (Object.keys(input).some((key) => !["startTime", "endTime", "page", "pageSize", "status"].includes(key) && !PLATFORM_FIELDS.includes(key))) return fail("INVALID_PARAMETER", "包含不允许查询的销售字段");
+  if (Object.keys(input).some((key) => !["startTime", "endTime", "page", "pageSize"].includes(key) && !PLATFORM_FIELDS.includes(key))) return fail("INVALID_PARAMETER", "包含不允许查询的销售字段");
   const range = parseRange(input);
   const page = input.page == null ? 1 : Number(input.page);
   const pageSize = input.pageSize == null ? 20 : Number(input.pageSize);
-  const status = input.status == null ? "normal" : String(input.status).trim();
   if (!range) return fail("INVALID_PARAMETER", "销售记录时间范围无效，最长支持366天");
   if (!Number.isSafeInteger(page) || page < 1 || !Number.isSafeInteger(pageSize) || pageSize < 1 || pageSize > 30) return fail("INVALID_PARAMETER", "分页参数无效");
-  if (!["all", "normal", "cancelled"].includes(status)) return fail("INVALID_PARAMETER", "销售状态筛选无效");
   try {
     const users = await db.collection("users").where({ openid, enabled: true }).limit(2).get();
     if (users.data.length !== 1) return fail("UNAUTHORIZED", "当前用户无权执行此操作");
     const match = { createdAt: _.gte(range.startTime).and(_.lt(range.endTime)) };
-    if (status !== "all") match.status = status;
     const result = await db.collection("sales").aggregate()
       .match(match)
       .sort({ createdAt: -1 })
@@ -54,7 +51,6 @@ exports.main = async (event) => {
         productName: 1,
         specification: 1,
         isGift: 1,
-        status: 1,
       })
       .group({
         _id: "$orderKey",
@@ -68,16 +64,15 @@ exports.main = async (event) => {
         createdAt: $.first("$createdAt"),
         firstProductName: $.first("$productName"),
         firstSpecification: $.first("$specification"),
-        status: $.first("$status"),
       })
       .sort({ createdAt: -1 })
       .skip((page - 1) * pageSize)
       .limit(pageSize + 1)
       .end();
     const rows = aggregateRows(result);
-    return { success: true, data: { list: rows.slice(0, pageSize), page, pageSize, hasMore: rows.length > pageSize, status, startTime: range.startMs, endTime: range.endMs }, message: "" };
+    return { success: true, data: { list: rows.slice(0, pageSize), page, pageSize, hasMore: rows.length > pageSize, startTime: range.startMs, endTime: range.endMs }, message: "" };
   } catch (error) {
-    console.error("getSales failed", { page, status, startTime: range.startMs, endTime: range.endMs, error: String(error && error.message ? error.message : error) });
+    console.error("getSales failed", { page, startTime: range.startMs, endTime: range.endMs, error: String(error && error.message ? error.message : error) });
     return fail("DATABASE_ERROR", "销售订单查询失败，请稍后重试");
   }
 };

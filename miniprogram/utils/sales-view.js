@@ -11,6 +11,12 @@ function withStatisticsDisplay(statistics) {
 }
 
 function withSaleDisplay(sale) {
+  const itemCount = Number.isSafeInteger(sale.itemCount) ? sale.itemCount : 1;
+  const totalQuantity = Number.isSafeInteger(sale.totalQuantity) ? sale.totalQuantity : sale.quantity;
+  const productTitle = sale.firstProductName || sale.productName || "商品";
+  const specification = sale.firstSpecification || sale.specification || "";
+  const firstItemTitle = specification ? `${productTitle} · ${specification}` : productTitle;
+  const fullTimeDisplay = formatDateTime(sale.createdAt);
   return {
     ...sale,
     unitPriceDisplay: Number.isSafeInteger(sale.unitPriceCent) ? formatSignedCent(sale.unitPriceCent) : "",
@@ -18,8 +24,10 @@ function withSaleDisplay(sale) {
     totalAmountDisplay: formatSignedCent(sale.totalAmountCent),
     totalCostDisplay: formatSignedCent(sale.totalCostCent),
     grossProfitDisplay: formatSignedCent(sale.grossProfitCent),
-    timeDisplay: formatDateTime(sale.createdAt),
-    cancelledAtDisplay: sale.cancelledAt ? formatDateTime(sale.cancelledAt) : "",
+    timeDisplay: fullTimeDisplay,
+    shortTimeDisplay: fullTimeDisplay.includes(" ") ? fullTimeDisplay.split(" ").pop() : fullTimeDisplay,
+    recentTitle: itemCount > 1 ? `${firstItemTitle}等${itemCount}种` : firstItemTitle,
+    recentQuantity: itemCount > 1 ? `共${totalQuantity}件` : `×${totalQuantity}`,
   };
 }
 

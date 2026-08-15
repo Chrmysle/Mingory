@@ -1,0 +1,25 @@
+<view class="auth-screen" wx:if="{{status !== 'authorized'}}">
+  <view class="auth-content">
+    <view class="auth-lock">锁</view>
+    <view class="auth-brand">Mingory</view>
+    <block wx:if="{{status === 'checking'}}">
+      <view class="auth-title">正在验证访问权限…</view>
+      <view class="auth-loading"><view class="auth-loading-bar"></view></view>
+    </block>
+    <block wx:elif="{{status === 'unauthorized'}}">
+      <view class="auth-title">当前账户未获得访问权限</view>
+      <view class="auth-message">{{message || '此小程序仅供店内授权人员使用。'}}</view>
+      <view class="auth-request">
+        <input class="auth-name-input" value="{{requestedName}}" maxlength="20" placeholder="请输入你的姓名" bindinput="onNameInput" />
+        <button class="auth-request-button" loading="{{requestState === 'submitting'}}" disabled="{{requestState === 'submitting'}}" bindtap="submitRequest">{{requestState === 'submitted' ? '重新提交申请' : '申请访问'}}</button>
+        <view class="auth-request-message {{requestState === 'error' ? 'error' : ''}}" wx:if="{{requestMessage}}">{{requestMessage}}</view>
+      </view>
+      <button class="auth-retry" bindtap="retry">重新检查权限</button>
+    </block>
+    <block wx:else>
+      <view class="auth-title">暂时无法验证访问权限</view>
+      <view class="auth-message">{{message || '请检查网络后重试。'}}</view>
+      <button class="auth-retry" bindtap="retry">重新检查权限</button>
+    </block>
+  </view>
+</view>

@@ -1,3 +1,5 @@
+<auth-gate status="{{authStatus}}" message="{{authMessage}}" bindretry="retryAuthorization" />
+<block wx:if="{{authStatus === 'authorized'}}">
 <view class="page-shell sell-hub">
   <view class="hub-header"><view><view class="page-title">卖货</view><view class="page-subtitle">连续扫码加入本次销售，最后整单结算</view></view><view class="operator" wx:if="{{user}}">{{user.name}}</view></view>
 
@@ -16,10 +18,15 @@
   </view>
   <view class="cart-empty surface" wx:else><view>本次销售还是空的</view><view>连续扫描同一商品会自动增加数量</view></view>
 
-  <view class="section-row" wx:if="{{pendingSales.length||loadingPending}}"><view><view class="section-title">云端挂单</view><view class="section-caption">三台手机都能看到 · 不锁库存</view></view></view>
+  <view class="section-row"><view><view class="section-title">云端挂单</view><view class="section-caption">三台手机都能看到 · 不锁库存</view></view></view>
   <view class="pending-list surface" wx:if="{{pendingSales.length}}"><view class="pending-row" wx:for="{{pendingSales}}" wx:key="_id"><view class="pending-main" data-index="{{index}}" bindtap="restorePending"><view class="pending-top"><text>{{item.displayLabel}}</text><text class="money-display">¥{{item.amountDisplay}}</text></view><view class="pending-meta">{{item.totalQuantity}}件 · {{item.itemCount}}种商品 · {{item.createdByName}}</view></view><button class="pending-delete" data-index="{{index}}" catchtap="removePending">删除</button></view></view>
+  <view class="compact-loading" wx:if="{{loadingPending&&!pendingSales.length}}">正在读取云端挂单…</view>
+  <view class="compact-empty surface" wx:elif="{{pendingState==='loaded'&&!pendingSales.length}}">暂无云端挂单</view>
+  <view class="inline-error" wx:elif="{{pendingState==='error'&&!pendingSales.length}}">{{pendingError||'云端挂单读取失败'}}</view>
+  <view class="inline-error" wx:if="{{pendingState==='error'&&pendingSales.length}}">刷新失败，暂时显示上次读取的挂单：{{pendingError}}</view>
 
   <view class="section-row"><view><view class="section-title">今日最近销售</view><view class="section-caption">按一位顾客的一整单展示</view></view><view class="text-link tap-target" bindtap="openSales">全部记录</view></view>
   <view class="recent-list surface" wx:if="{{recentSales.length}}"><view class="recent-row tap-target" wx:for="{{recentSales}}" wx:key="_id" data-id="{{item._id}}" bindtap="openOrder"><view class="recent-main"><view class="recent-name">{{item.itemCount||1}}种商品 · {{item.totalQuantity||item.quantity}}件</view><view class="recent-meta">{{item.operatorName||'未知操作人'}} · {{item.timeDisplay}}</view></view><view class="recent-amount money-display">¥{{item.totalAmountDisplay}}</view><view class="chevron">›</view></view></view>
   <view class="compact-empty surface" wx:elif="{{!loadingRecent}}">今天还没有销售记录</view><view class="compact-loading" wx:else>正在读取最近销售…</view><view class="inline-error" wx:if="{{error}}">{{error}}</view>
 </view>
+</block>

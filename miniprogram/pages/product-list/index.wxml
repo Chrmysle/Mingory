@@ -1,3 +1,5 @@
+<auth-gate status="{{authStatus}}" message="{{authMessage}}" bindretry="retryAuthorization" />
+<block wx:if="{{authStatus === 'authorized'}}">
 <view class="page-shell product-page">
   <view class="page-title">商品</view><view class="page-subtitle">查看店内商品、规格、价格和库存</view>
   <view class="search-entry surface tap-target" bindtap="search"><text>搜索商品名称、规格、编号或条码</text><text>搜索</text></view>
@@ -16,3 +18,4 @@
   </view>
   <view class="list-footer" wx:if="{{loading}}">正在加载…</view><view class="list-footer" wx:elif="{{list.length&&!hasMore}}">已显示全部商品</view>
 </view>
+</block>

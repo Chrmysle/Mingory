@@ -1,9 +1,10 @@
 const { getSales } = require("../../services/statistics");
 const { getPresetRange, getCustomRange, formatBeijingDate } = require("../../utils/time-range");
 const { withSaleDisplay } = require("../../utils/sales-view");
+const { withAuth } = require("../../utils/auth-page");
 
-Page({
-  data: { type: "today", saleStatus: "normal", rangeLabel: "今天", startDate: "", endDate: "", list: [], page: 1, hasMore: true, loading: false, error: "" },
+Page(withAuth({
+  data: { type: "today", rangeLabel: "今天", startDate: "", endDate: "", list: [], page: 1, hasMore: true, loading: false, error: "" },
   onLoad(options = {}) {
     const today = formatBeijingDate();
     const date = /^\d{4}-\d{2}-\d{2}$/.test(options.date || "") ? options.date : "";
@@ -20,7 +21,6 @@ Page({
     this.setData({ type });
     if (type !== "custom") this.setRange(getPresetRange(type));
   },
-  chooseStatus(e) { this.setData({ saleStatus: e.currentTarget.dataset.status }); this.reload(); },
   onDateChange(e) { this.setData({ [e.currentTarget.dataset.field]: e.detail.value }); },
   applyCustom() {
     try { this.setRange(getCustomRange(this.data.startDate, this.data.endDate)); }
@@ -32,10 +32,10 @@ Page({
     if (!this.range || this.data.loading || !this.data.hasMore) return;
     this.setData({ loading: true });
     try {
-      const result = await getSales({ ...this.range, status: this.data.saleStatus, page: this.data.page, pageSize: 20 });
+      const result = await getSales({ ...this.range, page: this.data.page, pageSize: 20 });
       this.setData({ list: this.data.list.concat(result.list.map(withSaleDisplay)), page: this.data.page + 1, hasMore: result.hasMore });
     } catch (error) { this.setData({ error: error.message }); }
     finally { this.setData({ loading: false }); }
   },
   open(e) { wx.navigateTo({ url: `/pages/sale-detail/index?id=${e.currentTarget.dataset.id}` }); },
-});
+}));

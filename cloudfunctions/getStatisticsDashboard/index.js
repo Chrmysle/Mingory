@@ -155,7 +155,7 @@ exports.main = async (event) => {
   try {
     const users = await db.collection("users").where({ openid, enabled: true }).limit(2).get();
     if (users.data.length !== 1) return fail("UNAUTHORIZED", "当前用户无权执行此操作");
-    const match = { status: "normal", createdAt: _.gte(range.startTime).and(_.lt(range.endTime)) };
+    const match = { createdAt: _.gte(range.startTime).and(_.lt(range.endTime)) };
 
     const [dailyResult, skuResult] = await Promise.all([
       db.collection("sales").aggregate()
@@ -221,7 +221,7 @@ exports.main = async (event) => {
     };
   } catch (error) {
     console.error("getStatisticsDashboard failed", { startTime: range.startMs, endTime: range.endMs, error: String(error && error.message ? error.message : error) });
-    if (isMissingIndexError(error)) return fail("INDEX_REQUIRED", "统计 Dashboard 需要 sales 的 status + createdAt 索引");
+    if (isMissingIndexError(error)) return fail("INDEX_REQUIRED", "统计 Dashboard 需要 sales 的 createdAt 索引");
     return fail("DATABASE_ERROR", "统计 Dashboard 查询失败，请稍后重试");
   }
 };

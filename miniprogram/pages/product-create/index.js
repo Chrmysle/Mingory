@@ -1,12 +1,13 @@
 const productService = require("../../services/product");
 const { toProductPayload } = require("../../utils/product-form");
 const { scanBarcode } = require("../../utils/scan-barcode");
+const { withAuth } = require("../../utils/auth-page");
 
 const EMPTY_PRODUCT = { name:"", unit:"", supplier:"", imageFileID:"", shelfLocation:"", remark:"" };
 let variantSeed = 0;
 const emptyVariant = (barcode="") => ({ _key:`new-${Date.now()}-${variantSeed += 1}`, specification:"", costPrice:"", salePrice:"", stock:"0", warningStock:"", barcode });
 
-Page({
+Page(withAuth({
   data:{ product:{...EMPTY_PRODUCT}, variants:[emptyVariant()], hasVariants:false, unitPresets:["个","件","袋","包","瓶","盒","卷","套","米","斤"], submitting:false, uploading:false },
   onLoad(options) {
     const barcode = options && options.barcode ? decodeURIComponent(options.barcode) : "";
@@ -69,4 +70,4 @@ Page({
     } catch(error){wx.showToast({title:error.message,icon:"none"});}
     finally{this.setData({submitting:false});}
   },
-});
+}));

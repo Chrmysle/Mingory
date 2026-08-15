@@ -128,7 +128,6 @@ exports.main = async (event) => {
         afterStock,
         operatorOpenId: openid,
         operatorName: user.name,
-        status: "normal",
         createdAt: now,
       };
 

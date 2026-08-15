@@ -1,3 +1,5 @@
+<auth-gate status="{{authStatus}}" message="{{authMessage}}" bindretry="retryAuthorization" />
+<block wx:if="{{authStatus === 'authorized'}}">
 <view class="page-shell">
   <view class="page-state" wx:if="{{loading}}">正在加载商品…</view><view class="page-state error-text" wx:elif="{{error}}">{{error}}</view>
   <block wx:else>
@@ -12,7 +14,7 @@
         <view class="variant-detail" wx:if="{{expandedVariantId===item._id}}">
           <view class="cost-row"><text>进货价</text><text class="money-display">¥{{item.costPriceDisplay}}</text></view><view class="suggest-title">按进价加价的建议售价</view><view class="suggestions"><view><text>20%</text><text>¥{{item.suggestedPrice20Display}}</text></view><view><text>25%</text><text>¥{{item.suggestedPrice25Display}}</text></view><view><text>30%</text><text>¥{{item.suggestedPrice30Display}}</text></view></view>
           <button class="sell success-button" data-id="{{item._id}}" catchtap="sell" disabled="{{!product.enabled || !item.enabled || item.stock <= 0}}">{{item.stock <= 0 ? '库存为 0' : '加入本次销售'}}</button>
-          <view class="variant-actions"><button class="stock-in" data-id="{{item._id}}" catchtap="stockIn" disabled="{{!product.enabled || !item.enabled}}">入库</button><button class="adjust" data-id="{{item._id}}" catchtap="adjustStock" disabled="{{!product.enabled || !item.enabled}}">调整库存</button><button class="logs" data-id="{{item._id}}" catchtap="inventoryLogs">库存记录</button></view>
+          <view class="variant-actions"><button class="stock-in" data-id="{{item._id}}" catchtap="stockIn" disabled="{{!product.enabled || !item.enabled}}">入库</button><button class="adjust" data-id="{{item._id}}" catchtap="adjustStock" disabled="{{!product.enabled || !item.enabled}}">调整 / 盘点</button></view>
         </view>
       </view>
     </view>
@@ -21,7 +23,8 @@
     <view class="archive-management" wx:else>
       <view class="archive-notice surface"><view class="section-title">已归档</view><view class="section-caption">归档于 {{archiveInfo.archivedAtDisplay||'时间未知'}}，当前不会参与销售和库存操作。</view></view>
       <button class="primary-button" bindtap="restoreProduct" loading="{{restoring}}" disabled="{{restoring||permanentlyDeleting}}">恢复商品</button>
-      <view class="danger-zone surface"><view class="section-title">危险操作</view><view class="section-caption" wx:if="{{archiveInfo.canPermanentlyDelete}}">该商品没有销售、库存流水或挂单引用，可以永久删除。</view><view class="blocked-reason" wx:else>无法永久删除：{{archiveInfo.blockerText||'正在检查历史引用'}}。为保证历史经营数据完整，只能保持归档状态。</view><button class="danger-button" bindtap="permanentlyDeleteProduct" loading="{{permanentlyDeleting}}" disabled="{{!archiveInfo.canPermanentlyDelete||permanentlyDeleting||restoring}}">永久删除</button></view>
+      <view class="danger-zone surface"><view class="section-title">危险操作</view><view class="section-caption" wx:if="{{archiveInfo.hasHistoricalData}}">该商品关联 {{archiveInfo.saleLineCount}} 条销售明细、{{archiveInfo.inventoryLogCount}} 条库存记录和 {{archiveInfo.pendingItemCount}} 个挂单商品。永久删除会一并清理，并可能改变历史经营统计。</view><view class="section-caption" wx:elif="{{archiveInfo.canPermanentlyDelete}}">该商品没有关联经营数据，可以永久删除。</view><view class="blocked-reason" wx:else>暂时无法删除：{{archiveInfo.blockerText||'正在检查关联数据'}}。</view><button class="danger-button" bindtap="permanentlyDeleteProduct" loading="{{permanentlyDeleting}}" disabled="{{!archiveInfo.canPermanentlyDelete||permanentlyDeleting||restoring}}">永久删除商品及相关数据</button></view>
     </view>
   </block>
 </view>
+</block>

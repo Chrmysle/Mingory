@@ -1,3 +1,5 @@
+<auth-gate status="{{authStatus}}" message="{{authMessage}}" bindretry="retryAuthorization" />
+<block wx:if="{{authStatus === 'authorized'}}">
 <view class="page-shell">
   <view class="page-state" wx:if="{{loading}}">正在读取库存…</view><view class="page-state error-text" wx:elif="{{error}}">{{error}}</view>
   <block wx:else>
@@ -14,3 +16,4 @@
     </block>
   </block>
 </view>
+</block>

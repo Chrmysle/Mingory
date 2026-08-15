@@ -1,42 +1,38 @@
-const { getSale, cancelSale: cancelSaleOrder } = require("../../services/statistics");
+const { getSale, deleteSale } = require("../../services/statistics");
 const { withOrderDetail } = require("../../utils/sales-view");
+const { withAuth } = require("../../utils/auth-page");
 
-Page({
-  data: { order: null, items: [], loading: true, cancelling: false, error: "" },
+Page(withAuth({
+  data: { order: null, items: [], loading: true, deleting: "", error: "" },
   onLoad(options) { this.saleId = options.id || ""; if (!this.saleId) return this.setData({ loading: false, error: "缺少销售记录 ID" }); this.load(); },
   async load() {
     try { this.setData(withOrderDetail(await getSale({ orderId: this.saleId }))); }
     catch (error) { this.setData({ error: error.message }); }
     finally { this.setData({ loading: false }); }
   },
-  async cancelSale() {
-    if (this.data.cancelling || !this.data.order || this.data.order.status !== "normal") return;
-    const reasons = ["录错商品", "重复录入", "顾客没要", "数量录错", "其他原因"];
-    let selected;
-    try { selected = await wx.showActionSheet({ itemList: reasons }); }
-    catch (_) { return; }
-    let reason = reasons[selected.tapIndex] || "";
-    if (reason === "其他原因") {
-      const custom = await wx.showModal({ title: "填写撤销原因", editable: true, placeholderText: "请输入原因", confirmText: "下一步" });
-      if (!custom.confirm) return;
-      reason = String(custom.content || "").trim();
-      if (!reason) return wx.showToast({ title: "请填写撤销原因", icon: "none" });
-    }
+  deleteLine(event) {
+    const saleId = event.currentTarget.dataset.saleId;
+    const item = this.data.items.find((line) => line._id === saleId);
+    if (item) this.confirmDelete({ saleId, label: item.specification ? `${item.productName} · ${item.specification}` : item.productName });
+  },
+  deleteOrder() { this.confirmDelete({ saleId: "", label: "整笔销售" }); },
+  async confirmDelete({ saleId, label }) {
+    if (this.data.deleting || !this.data.order) return;
     const modal = await wx.showModal({
-      title: "撤销销售",
-      content: `撤销原因：${reason}\n撤销后将恢复整单库存，并从经营统计中排除。原销售和库存流水仍会保留。`,
-      confirmText: "确认撤销",
+      title: saleId ? "删除此商品" : "删除这笔销售",
+      content: `确定永久删除${label ? `“${label}”` : "这笔销售"}吗？\n\n删除后：\n• 商品库存将恢复\n• 对应销售和库存记录将永久移除\n• 经营统计将自动变化\n\n此操作无法恢复。`,
+      confirmText: "永久删除",
       confirmColor: "#ff6b67",
     });
     if (!modal.confirm) return;
-    this.setData({ cancelling: true });
+    this.setData({ deleting: saleId || "__ORDER__" });
     try {
-      await cancelSaleOrder({ orderId: this.saleId, reason });
-      wx.showToast({ title: "销售已撤销", icon: "success" });
-      this.setData({ loading: true, error: "" });
-      await this.load();
+      const result = await deleteSale({ orderId: this.saleId, ...(saleId ? { saleId } : {}) });
+      wx.showToast({ title: "销售已删除", icon: "success" });
+      if (result.orderDeleted) return wx.navigateBack();
+      this.setData({ loading: true, error: "" }); await this.load();
     } catch (error) {
       wx.showToast({ title: error.message, icon: "none" });
-    } finally { this.setData({ cancelling: false }); }
+    } finally { this.setData({ deleting: "" }); }
   },
-});
+}));

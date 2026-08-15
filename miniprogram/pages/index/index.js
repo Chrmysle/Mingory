@@ -3,13 +3,10 @@ const { getBusinessStatistics, getSales } = require("../../services/statistics")
 const { getSupplierRestock } = require("../../services/inventory");
 const { getPresetRange } = require("../../utils/time-range");
 const { withStatisticsDisplay, withSaleDisplay } = require("../../utils/sales-view");
+const { withAuth } = require("../../utils/auth-page");
 
-Page({
+Page(withAuth({
   data: {
-    status: "loading",
-    user: null,
-    openid: "",
-    message: "正在验证身份…",
     today: null,
     recentSales: [],
     urgentItems: [],
@@ -20,30 +17,13 @@ Page({
     dashboardError: "",
   },
 
-  onLoad() { this.loadUser(); },
+  onLoad() { this.loadDashboard(); },
   onShow() {
-    if (this.hasShown && this.data.status === "ready") this.loadDashboard();
+    if (this.hasShown) this.loadDashboard();
     this.hasShown = true;
   },
   onPullDownRefresh() {
-    const task = this.data.status === "ready" ? this.loadDashboard() : this.loadUser();
-    Promise.resolve(task).finally(() => wx.stopPullDownRefresh());
-  },
-
-  async loadUser() {
-    this.setData({ status: "loading", message: "正在验证身份…" });
-    try {
-      const user = await getApp().userReady;
-      this.setData({ status: "ready", user, message: "" });
-      await this.loadDashboard();
-    } catch (error) {
-      const unauthorized = error.code === "UNAUTHORIZED";
-      this.setData({
-        status: unauthorized ? "unauthorized" : "error",
-        openid: error.data && error.data.openid ? error.data.openid : "",
-        message: error.message || "初始化失败，请稍后重试",
-      });
-    }
+    Promise.resolve(this.loadDashboard()).finally(() => wx.stopPullDownRefresh());
   },
 
   async loadDashboard() {
@@ -76,6 +56,6 @@ Page({
   openOrder(event) { wx.navigateTo({ url: `/pages/sale-detail/index?id=${event.currentTarget.dataset.id}` }); },
   openStatistics() { wx.switchTab({ url: "/pages/business-statistics/index" }); },
   openInventory() { wx.switchTab({ url: "/pages/inventory/index" }); },
-  copyOpenId() { if (this.data.openid) wx.setClipboardData({ data: this.data.openid }); },
+  openMembers() { wx.navigateTo({ url: "/pages/member-management/index" }); },
   scanSale,
-});
+}));

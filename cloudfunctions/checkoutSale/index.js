@@ -148,7 +148,6 @@ exports.main = async (event) => {
         grossProfitCent: totalAmountCent - totalCostCent,
         operatorOpenId: openid,
         operatorName: user.name,
-        status: "normal",
         createdAt: now,
         updatedAt: now,
       };
@@ -180,7 +179,6 @@ exports.main = async (event) => {
           afterStock: row.afterStock,
           operatorOpenId: openid,
           operatorName: user.name,
-          status: "normal",
           createdAt: now,
         };
         await transaction.collection("product_variants").doc(row.variant._id).update({ data: { stock: row.afterStock, updatedAt: now } });

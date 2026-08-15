@@ -1,6 +1,7 @@
 const { getSupplierRestock } = require("../../services/inventory");
+const { withAuth } = require("../../utils/auth-page");
 
-Page({
+Page(withAuth({
   data: { outOfStockCount: 0, lowStockCount: 0, urgentItems: [], loading: true, error: "" },
 
   onLoad() { this.load(); this.loaded = true; },
@@ -27,16 +28,8 @@ Page({
   },
 
   openRestock() { wx.navigateTo({ url: "/pages/restock-suppliers/index" }); },
-  openLogs() { wx.navigateTo({ url: "/pages/inventory-logs/index?scope=all" }); },
-  openStockInRecords() { wx.navigateTo({ url: "/pages/inventory-logs/index?scope=all&type=STOCK_IN" }); },
-  chooseStocktakeProduct() {
-    wx.switchTab({
-      url: "/pages/product-list/index",
-      success: () => wx.showToast({ title: "请选择商品后进行盘点", icon: "none" }),
-    });
-  },
   stockIn(event) {
     const variantId = event.currentTarget.dataset.variantId;
     if (variantId) wx.navigateTo({ url: `/pages/stock-in/index?variantId=${encodeURIComponent(variantId)}&source=inventory` });
   },
-});
+}));

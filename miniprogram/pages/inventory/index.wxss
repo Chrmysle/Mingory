@@ -8,7 +8,7 @@
 .overview-divider { width: 1rpx; height: 66rpx; background: var(--color-border); }
 .danger-number { color: var(--color-danger); }
 .warning-number { color: var(--color-warning); }
-.tool-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14rpx; }
+.tool-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14rpx; }
 .tool { min-height: 124rpx; padding: 23rpx; border: 1rpx solid var(--color-border); border-radius: var(--radius-md); background: var(--color-surface); transition: transform 120ms var(--ease-out), opacity 120ms ease; }
 .tool text { display: block; }
 .tool text:first-child { font-size: 29rpx; font-weight: 650; }

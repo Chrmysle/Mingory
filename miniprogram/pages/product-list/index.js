@@ -1,8 +1,9 @@
 const productService = require("../../services/product");
 const { withProductSummary } = require("../../utils/product-view");
 const { scanProduct } = require("../../utils/scan-product");
+const { withAuth } = require("../../utils/auth-page");
 
-Page({
+Page(withAuth({
   data: { list: [], page: 1, hasMore: true, loading: false, error: "" },
   onLoad() { this.reload(); this.loaded = true; },
   onShow() { if (this.loaded && this.hidden) this.reload(); this.hidden = false; },
@@ -24,4 +25,4 @@ Page({
   openArchive() { wx.navigateTo({ url: "/pages/product-archive/index" }); },
   search() { wx.navigateTo({ url: "/pages/product-search/index" }); },
   scanProduct,
-});
+}));

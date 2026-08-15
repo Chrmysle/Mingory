@@ -1,37 +1,48 @@
 page {
-  --color-bg: #111317;
-  --color-surface: #191c21;
-  --color-surface-raised: #20242a;
-  --color-surface-subtle: #24282f;
-  --color-text: #f2f4f7;
-  --color-text-secondary: #b2b7c0;
-  --color-text-tertiary: #7f8691;
-  --color-border: #2a2f37;
-  --color-primary: #4da3ff;
-  --color-primary-strong: #2f8ff5;
-  --color-primary-soft: rgba(77, 163, 255, 0.14);
-  --color-success: #39c58a;
-  --color-success-soft: rgba(57, 197, 138, 0.13);
-  --color-warning: #f0a84b;
-  --color-warning-soft: rgba(240, 168, 75, 0.14);
-  --color-danger: #ff6b67;
-  --color-danger-soft: rgba(255, 107, 103, 0.13);
+  --color-bg: #ffffff;
+  --color-surface: #ffffff;
+  --color-surface-raised: #eef1f5;
+  --color-surface-subtle: #f4f6f8;
+  --color-text: #17191d;
+  --color-text-secondary: #5e6570;
+  --color-text-tertiary: #8a919c;
+  --color-border: #e3e7ec;
+  --color-primary: #368ee8;
+  --color-primary-strong: #237bd4;
+  --color-primary-soft: rgba(54, 142, 232, 0.12);
+  --color-success: #20a46b;
+  --color-success-soft: rgba(32, 164, 107, 0.11);
+  --color-warning: #d88721;
+  --color-warning-soft: rgba(216, 135, 33, 0.12);
+  --color-danger: #df4f4b;
+  --color-danger-soft: rgba(223, 79, 75, 0.11);
   --radius-sm: 12rpx;
   --radius-md: 18rpx;
   --radius-lg: 24rpx;
   --space-page: 28rpx;
   --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
   --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
-  min-height: 100%;
+  height: 100%;
+  min-height: 100vh;
   width: 100%;
   max-width: 100%;
   overflow-x: hidden;
-  background: #111317;
+  background: #ffffff;
   background: var(--color-bg);
   color: var(--color-text);
   font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
   font-size: 28rpx;
   line-height: 1.5;
+}
+
+/* 页面首帧与微信原生白色容器保持一致，避免 Tab 切换时产生明暗闪烁。 */
+.page-shell,
+.home-page,
+.form-page,
+.page {
+  min-height: 100vh;
+  background-color: #ffffff;
+  background-color: var(--color-bg);
 }
 
 view,

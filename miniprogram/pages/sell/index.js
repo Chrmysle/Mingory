@@ -1,13 +1,14 @@
 const productService = require("../../services/product");
 const { checkoutSale, managePendingSales } = require("../../services/sale");
 const { getSales } = require("../../services/statistics");
+const { withAuth } = require("../../utils/auth-page");
 const { withProductSummary } = require("../../utils/product-view");
 const { withSaleDisplay } = require("../../utils/sales-view");
 const { getPresetRange } = require("../../utils/time-range");
 const { formatCent, yuanToCent } = require("../../utils/money");
 const cart = require("../../utils/sale-cart");
 
-Page({
+Page(withAuth({
   data: {
     user: null,
     keyword: "",
@@ -18,6 +19,8 @@ Page({
     totalQuantity: 0,
     totalAmountDisplay: "0.00",
     pendingSales: [],
+    pendingState: "idle",
+    pendingError: "",
     recentSales: [],
     loadingRecent: true,
     loadingPending: false,
@@ -28,17 +31,29 @@ Page({
   },
 
   onLoad() {
-    getApp().userReady.then((user) => this.setData({ user })).catch((error) => this.setData({ error: error.message }));
+    this.pendingLoadVersion = 0;
+    this.setData({ user:this.data.authUser });
   },
 
   onShow() {
+    this.pageVisible = true;
     this.refreshCart();
     this.loadRecentSales();
-    this.loadPendingSales();
+    this.loadPendingSales("onShow");
+  },
+
+  onHide() {
+    this.pageVisible = false;
+    this.pendingLoadVersion += 1;
+  },
+
+  onUnload() {
+    this.pageVisible = false;
+    this.pendingLoadVersion += 1;
   },
 
   onPullDownRefresh() {
-    Promise.all([this.loadRecentSales(), this.loadPendingSales()]).finally(() => wx.stopPullDownRefresh());
+    Promise.all([this.loadRecentSales(), this.loadPendingSales("pullDown")]).finally(() => wx.stopPullDownRefresh());
   },
 
   refreshCart() {
@@ -161,25 +176,40 @@ Page({
       await managePendingSales({ action: "save", pendingId, ...cart.checkoutPayload(this.cartState) });
       cart.clear();
       this.refreshCart();
-      await this.loadPendingSales();
+      await this.loadPendingSales("savePending");
       wx.showToast({ title: "挂单成功", icon: "success" });
     } catch (error) { wx.showToast({ title: error.message, icon: "none" }); }
     finally { this.setData({ savingPending: false }); }
   },
 
-  async loadPendingSales() {
-    if (this.data.loadingPending) return;
-    this.setData({ loadingPending: true });
+  async loadPendingSales(source = "manual") {
+    const version = ++this.pendingLoadVersion;
+    this.setData({ loadingPending: true, pendingState: "loading", pendingError: "" });
     try {
       const result = await managePendingSales({ action: "list" });
+      if (!this.pageVisible || version !== this.pendingLoadVersion) {
+        return { stale: true, source };
+      }
       const pendingSales = result.list.map((item, index) => ({
         ...item,
         displayLabel: `挂单 ${String(result.list.length - index).padStart(2, "0")}`,
         amountDisplay: formatCent(item.totalAmountCent),
       }));
-      this.setData({ pendingSales });
-    } catch (error) { this.setData({ error: error.message }); }
-    finally { this.setData({ loadingPending: false }); }
+      this.setData({ pendingSales, pendingState: "loaded", pendingError: "", loadingPending: false });
+      return { stale: false, source, pendingSales };
+    } catch (error) {
+      if (!this.pageVisible || version !== this.pendingLoadVersion) return { stale: true, source };
+      this.setData({ pendingState: "error", pendingError: error.message, loadingPending: false });
+      return { stale: false, source, error };
+    }
+  },
+
+  removePendingFromView(pendingId) {
+    this.setData({
+      pendingSales: this.data.pendingSales.filter((item) => item._id !== pendingId),
+      pendingState: "loaded",
+      pendingError: "",
+    });
   },
 
   async restorePending(event) {
@@ -189,8 +219,16 @@ Page({
       const modal = await wx.showModal({ title: "恢复挂单", content: "当前销售单已有商品，恢复后将替换当前内容。是否继续？", confirmText: "恢复" });
       if (!modal.confirm) return;
     }
-    try { cart.restorePending(pending); this.setData({ checkoutResult: null }); this.refreshCart(); wx.pageScrollTo({ scrollTop: 0, duration: 0 }); }
-    catch (error) { wx.showToast({ title: error.message, icon: "none" }); }
+    try {
+      cart.restorePending(pending);
+      this.setData({ checkoutResult: null });
+      this.refreshCart();
+      await managePendingSales({ action: "remove", pendingId: pending._id });
+      this.removePendingFromView(pending._id);
+      await this.loadPendingSales("restorePending");
+      wx.pageScrollTo({ scrollTop: 0, duration: 0 });
+      wx.showToast({ title: "挂单已恢复", icon: "success" });
+    } catch (error) { wx.showToast({ title: error.message, icon: "none" }); }
   },
 
   async removePending(event) {
@@ -198,7 +236,7 @@ Page({
     if (!pending) return;
     const modal = await wx.showModal({ title: "删除挂单", content: "挂单不会扣库存，确定删除这张挂单吗？", confirmText: "删除", confirmColor: "#ff6b67" });
     if (!modal.confirm) return;
-    try { await managePendingSales({ action: "remove", pendingId: pending._id }); await this.loadPendingSales(); }
+    try { await managePendingSales({ action: "remove", pendingId: pending._id }); this.removePendingFromView(pending._id); await this.loadPendingSales("removePending"); }
     catch (error) { wx.showToast({ title: error.message, icon: "none" }); }
   },
 
@@ -216,7 +254,7 @@ Page({
       cart.clear();
       this.setData({ checkoutResult: { ...result.order, amountDisplay: formatCent(result.order.totalAmountCent) } });
       this.refreshCart();
-      await Promise.all([this.loadPendingSales(), this.loadRecentSales()]);
+      await Promise.all([this.loadPendingSales("checkout"), this.loadRecentSales()]);
       if (pendingCleanupFailed) wx.showToast({ title: "销售成功，原挂单需手动删除", icon: "none" });
     } catch (error) {
       wx.showModal({ title: "整单销售未完成", content: error.message, showCancel: false });
@@ -238,4 +276,4 @@ Page({
 
   openOrder(event) { wx.navigateTo({ url: `/pages/sale-detail/index?id=${event.currentTarget.dataset.id}` }); },
   openSales() { wx.navigateTo({ url: "/pages/sales/index" }); },
-});
+}));

@@ -1,3 +1,5 @@
+<auth-gate status="{{authStatus}}" message="{{authMessage}}" bindretry="retryAuthorization" />
+<block wx:if="{{authStatus === 'authorized'}}">
 <view class="page-shell restock-page">
   <view class="summary surface">
     <view>
@@ -30,3 +32,4 @@
     </view>
   </view>
 </view>
+</block>

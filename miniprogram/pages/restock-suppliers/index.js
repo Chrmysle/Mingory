@@ -1,6 +1,7 @@
 const { getSupplierRestock } = require("../../services/inventory");
+const { withAuth } = require("../../utils/auth-page");
 
-Page({
+Page(withAuth({
   data: {
     suppliers: [],
     totalRestockSkuCount: 0,
@@ -50,4 +51,4 @@ Page({
       : `supplier=${encodeURIComponent(item.supplier)}`;
     wx.navigateTo({ url: `/pages/restock-items/index?${query}` });
   },
-});
+}));

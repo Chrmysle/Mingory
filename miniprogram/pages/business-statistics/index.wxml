@@ -1,3 +1,5 @@
+<auth-gate status="{{authStatus}}" message="{{authMessage}}" bindretry="retryAuthorization" />
+<block wx:if="{{authStatus === 'authorized'}}">
 <view class="page-shell statistics-page">
   <view class="page-title">经营统计</view><view class="page-subtitle">看清卖了多少、赚了多少、什么最好卖</view>
   <view class="filters"><button class="{{type==='today'?'active':''}}" data-type="today" bindtap="choosePreset">今日</button><button class="{{type==='week'?'active':''}}" data-type="week" bindtap="choosePreset">本周</button><button class="{{type==='month'?'active':''}}" data-type="month" bindtap="choosePreset">本月</button><button class="{{type==='custom'?'active':''}}" data-type="custom" bindtap="choosePreset">自定义</button></view>
@@ -43,3 +45,4 @@
     <view class="daily-list surface"><view class="daily-row tap-target" wx:for="{{daily}}" wx:key="date" data-date="{{item.date}}" bindtap="openDay"><view class="daily-date"><text>{{item.dateDisplay}}</text><text>{{item.quantity}}件 · {{item.saleCount}}笔</text></view><view class="daily-value"><text class="money-display">营业额 ¥{{item.revenueDisplay}}</text><text class="money-display {{item.grossProfitCent<0?'negative':'profit'}}">毛利 ¥{{item.grossProfitDisplay}}</text></view><text class="chevron">›</text></view></view>
   </block>
 </view>
+</block>

@@ -22,12 +22,7 @@ function legacyOrder(sale) {
     grossProfitCent: sale.grossProfitCent,
     operatorOpenId: sale.operatorOpenId,
     operatorName: sale.operatorName,
-    status: sale.status,
     createdAt: sale.createdAt,
-    cancelledBy: sale.cancelledBy,
-    cancelledByName: sale.cancelledByName,
-    cancelledAt: sale.cancelledAt,
-    cancelReason: sale.cancelReason,
     legacy: true,
   };
 }

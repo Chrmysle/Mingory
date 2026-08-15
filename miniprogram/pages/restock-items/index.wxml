@@ -1,3 +1,5 @@
+<auth-gate status="{{authStatus}}" message="{{authMessage}}" bindretry="retryAuthorization" />
+<block wx:if="{{authStatus === 'authorized'}}">
 <view class="page-shell items-page">
   <view class="supplier-header surface">
     <view class="supplier-label">供货商</view>
@@ -43,3 +45,4 @@
     </view>
   </view>
 </view>
+</block>
