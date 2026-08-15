@@ -33,7 +33,7 @@ exports.main = async (event) => {
     const users = await db.collection("users").where({ openid, enabled: true }).limit(2).get();
     if (users.data.length !== 1) return fail("UNAUTHORIZED", "当前用户无权执行此操作");
     const result = await db.collection("sales").aggregate()
-      .match({ status: "normal", createdAt: _.gte(range.startTime).and(_.lt(range.endTime)) })
+      .match({ createdAt: _.gte(range.startTime).and(_.lt(range.endTime)) })
       .project({
         totalAmountCent: 1,
         totalCostCent: 1,
@@ -74,7 +74,7 @@ exports.main = async (event) => {
   } catch (error) {
     console.error("getBusinessStatistics failed", { startTime: range.startMs, endTime: range.endMs, error: String(error && error.message ? error.message : error) });
     if (isMissingIndexError(error)) {
-      return fail("INDEX_REQUIRED", "经营数据需要 sales 的 status + createdAt 索引，请先完成数据库索引配置");
+      return fail("INDEX_REQUIRED", "经营数据需要 sales 的 createdAt 索引，请先完成数据库索引配置");
     }
     return fail("DATABASE_ERROR", "经营数据查询失败，请稍后重试");
   }

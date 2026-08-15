@@ -2,7 +2,7 @@
 .home-header,.panel-header,.section-heading { display: flex; align-items: center; justify-content: space-between; }
 .brand { font-size: 46rpx; font-weight: 700; line-height: 1.1; letter-spacing: -1.4rpx; }
 .subtitle { margin-top: 7rpx; color: var(--color-text-tertiary); font-size: 25rpx; }
-.ready-badge { padding: 8rpx 16rpx; border-radius: 999rpx; color: var(--color-primary); font-size: 23rpx; background: var(--color-primary-soft); }
+.ready-badge { min-height: 64rpx; padding: 10rpx 18rpx; border-radius: 999rpx; color: var(--color-primary); font-size: 23rpx; line-height: 44rpx; background: var(--color-primary-soft); }
 .home-header + .page-state,.business-panel { margin-top: 30rpx; }
 .business-panel { padding: 28rpx; }
 .detail-link { min-height: 64rpx; padding: 12rpx 0 12rpx 24rpx; color: var(--color-primary); font-size: 25rpx; line-height: 40rpx; transition: transform 120ms var(--ease-out), opacity 120ms ease; }
@@ -29,10 +29,12 @@
 .row-status.out { color: var(--color-danger); background: var(--color-danger-soft); }
 .row-status.low { color: var(--color-warning); background: var(--color-warning-soft); }
 .sale-amount { flex: none; font-size: 29rpx; font-weight: 650; }
+.recent-sales { padding-top: 2rpx; padding-bottom: 2rpx; }
+.recent-sale-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 20rpx; align-items: center; min-height: 116rpx; padding: 18rpx 2rpx; border-bottom: 1rpx solid var(--color-border); }
+.recent-sale-row:last-child { border-bottom: 0; }
+.recent-sale-main { min-width: 0; }
+.recent-sale-main .row-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.recent-sale-numbers { display: flex; min-width: 154rpx; flex-direction: column; align-items: flex-end; }
+.sale-profit { margin-top: 5rpx; color: var(--color-success); font-size: 22rpx; white-space: nowrap; }
+.sale-profit.negative { color: var(--color-danger); }
 .compact-empty { padding: 48rpx 22rpx; color: var(--color-text-tertiary); text-align: center; }
-.warning-state { margin-top: 30rpx; }
-.openid-box { margin-top: 28rpx; padding: 22rpx; border-radius: var(--radius-sm); text-align: left; background: var(--color-surface-subtle); }
-.openid-label,.openid-value { display: block; }
-.openid-label { color: var(--color-text-tertiary); font-size: 23rpx; }
-.openid-value { margin-top: 10rpx; overflow-wrap: anywhere; font-size: 24rpx; }
-.copy-button { display: inline-flex; margin: 22rpx 0 0; }

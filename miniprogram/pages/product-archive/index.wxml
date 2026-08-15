@@ -1,3 +1,5 @@
+<auth-gate status="{{authStatus}}" message="{{authMessage}}" bindretry="retryAuthorization" />
+<block wx:if="{{authStatus === 'authorized'}}">
 <view class="page-shell archive-page">
   <view class="page-title">归档商品</view>
   <view class="page-subtitle">归档商品不会参与销售和库存操作，可在这里恢复或安全永久删除</view>
@@ -14,3 +16,4 @@
   </view>
   <view class="list-footer" wx:if="{{loading}}">正在加载…</view><view class="list-footer" wx:elif="{{list.length&&!hasMore}}">已显示全部归档商品</view>
 </view>
+</block>

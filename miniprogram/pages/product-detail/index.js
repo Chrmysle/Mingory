@@ -1,9 +1,10 @@
 const productService = require("../../services/product");
 const { withProductDetail } = require("../../utils/product-view");
 const cart = require("../../utils/sale-cart");
+const { withAuth } = require("../../utils/auth-page");
 const { formatDateTime } = require("../../utils/date");
 
-Page({
+Page(withAuth({
   data: { product: null, variants: [], matchedVariantId: "", expandedVariantId: "", source: "", loading: true, archiving: false, restoring: false, permanentlyDeleting: false, archiveInfo: {}, error: "" },
   onLoad(options) {
     this.productId = options.id;
@@ -41,7 +42,6 @@ Page({
   },
   stockIn(event) { this.openVariantPage("stock-in", event); },
   adjustStock(event) { this.openVariantPage("stock-adjust", event); },
-  inventoryLogs(event) { this.openVariantPage("inventory-logs", event); },
   openVariantPage(page, event) {
     wx.navigateTo({ url: `/pages/${page}/index?variantId=${event.currentTarget.dataset.id}` });
   },
@@ -81,7 +81,15 @@ Page({
   },
   async permanentlyDeleteProduct() {
     if (this.data.permanentlyDeleting || !this.data.archiveInfo || !this.data.archiveInfo.canPermanentlyDelete) return;
-    const first = await wx.showModal({ title: "永久删除商品", content: "永久删除后无法恢复，Product 和所属全部 Variant 都会从数据库中移除。", confirmText: "继续", confirmColor: "#ff6b67" });
+    const history = this.data.archiveInfo.hasHistoricalData;
+    const first = await wx.showModal({
+      title: "永久删除商品",
+      content: history
+        ? `该商品存在历史经营数据。永久删除后：\n• 商品和所有规格将被删除\n• ${this.data.archiveInfo.saleLineCount} 条销售明细将被删除\n• ${this.data.archiveInfo.inventoryLogCount} 条库存记录将被删除\n• 历史营业额、成本、毛利润和销量可能变化\n\n此操作无法恢复。`
+        : "永久删除后，商品和所属全部规格将从数据库中移除，且无法恢复。",
+      confirmText: "继续",
+      confirmColor: "#ff6b67",
+    });
     if (!first.confirm) return;
     const second = await wx.showModal({ title: "再次确认", content: `确定永久删除“${this.data.product.name}”吗？此操作无法撤销。`, confirmText: "永久删除", confirmColor: "#ff6b67" });
     if (!second.confirm) return;
@@ -92,4 +100,4 @@ Page({
       setTimeout(() => wx.navigateBack({ fail: () => wx.switchTab({ url: "/pages/product-list/index" }) }), 500);
     } catch (error) { wx.showToast({ title: error.message, icon: "none" }); this.setData({ permanentlyDeleting: false }); }
   },
-});
+}));

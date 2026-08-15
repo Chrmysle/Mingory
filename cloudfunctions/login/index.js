@@ -28,7 +28,7 @@ exports.main = async () => {
       .get();
 
     if (users.length === 0) {
-      return fail("UNAUTHORIZED", "当前微信用户不在系统白名单中", { openid });
+      return fail("UNAUTHORIZED", "当前账户未获得访问权限");
     }
 
     if (users.length > 1) {
@@ -38,7 +38,7 @@ exports.main = async () => {
 
     const user = users[0];
     if (user.enabled !== true) {
-      return fail("UNAUTHORIZED", "当前账号已停用", { openid });
+      return fail("UNAUTHORIZED", "当前账户未获得访问权限");
     }
 
     return {

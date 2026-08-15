@@ -5,6 +5,7 @@
     "pages/product-create/index",
     "pages/product-list/index",
     "pages/product-archive/index",
+    "pages/member-management/index",
     "pages/inventory/index",
     "pages/product-search/index",
     "pages/product-detail/index",
@@ -12,7 +13,6 @@
     "pages/sale/index",
     "pages/stock-in/index",
     "pages/stock-adjust/index",
-    "pages/inventory-logs/index",
     "pages/sales/index",
     "pages/sale-detail/index",
     "pages/business-statistics/index",
@@ -20,18 +20,18 @@
     "pages/restock-items/index"
   ],
   "window": {
-    "backgroundColor": "#111317",
-    "backgroundColorTop": "#111317",
-    "backgroundColorBottom": "#111317",
-    "backgroundTextStyle": "light",
-    "navigationBarBackgroundColor": "#111317",
+    "backgroundColor": "#FFFFFF",
+    "backgroundColorTop": "#FFFFFF",
+    "backgroundColorBottom": "#FFFFFF",
+    "backgroundTextStyle": "dark",
+    "navigationBarBackgroundColor": "#FFFFFF",
     "navigationBarTitleText": "Mingory",
-    "navigationBarTextStyle": "white"
+    "navigationBarTextStyle": "black"
   },
   "tabBar": {
     "color": "#858B96",
     "selectedColor": "#4DA3FF",
-    "backgroundColor": "#17191D",
+    "backgroundColor": "#FFFFFF",
     "borderStyle": "black",
     "list": [
       { "pagePath": "pages/index/index", "text": "首页", "iconPath": "images/tabbar/home.png", "selectedIconPath": "images/tabbar/home-active.png" },
@@ -40,6 +40,9 @@
       { "pagePath": "pages/inventory/index", "text": "库存", "iconPath": "images/tabbar/inventory.png", "selectedIconPath": "images/tabbar/inventory-active.png" },
       { "pagePath": "pages/business-statistics/index", "text": "统计", "iconPath": "images/tabbar/statistics.png", "selectedIconPath": "images/tabbar/statistics-active.png" }
     ]
+  },
+  "usingComponents": {
+    "auth-gate": "/components/auth-gate/index"
   },
   "sitemapLocation": "sitemap.json",
   "style": "v2",

@@ -1,7 +1,8 @@
 const productService = require("../../services/product");
 const { formatDateTime } = require("../../utils/date");
+const { withAuth } = require("../../utils/auth-page");
 
-Page({
+Page(withAuth({
   data: { list: [], page: 1, hasMore: true, loading: false, error: "" },
   onLoad() { this.reload(); this.loaded = true; },
   onShow() { if (this.loaded && this.hidden) this.reload(); this.hidden = false; },
@@ -20,4 +21,4 @@ Page({
     finally { this.setData({ loading: false }); }
   },
   open(event) { wx.navigateTo({ url: `/pages/product-detail/index?id=${event.currentTarget.dataset.id}&archive=1` }); },
-});
+}));

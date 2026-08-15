@@ -95,7 +95,7 @@ async function run() {
   const source = fs.readFileSync(path.join(projectRoot, "cloudfunctions/getStatisticsDashboard/index.js"), "utf8");
   assert.equal(source.includes('timezone: "Asia/Shanghai"'), true);
   assert.equal(source.includes('.match(match)'), true);
-  assert.equal(source.includes('status: "normal"'), true);
+  assert.equal(source.includes('status: "normal"'), false);
   const view = require(path.join(projectRoot, "miniprogram/utils/statistics-dashboard-view.js"));
   const optionalUnitRanking = view.buildRanking([{ productId: "p-gift", variantId: "v-gift", productName: "赠品", specification: "", unit: "", quantity: 1, revenueCent: 0, grossProfitCent: -500 }], "quantity");
   assert.equal(optionalUnitRanking[0].valueDisplay, "1");

@@ -62,6 +62,21 @@ const formatProductCode = (sequence) => {
   return `SP${String(sequence).padStart(6, "0")}`;
 };
 
+async function getCounterValue(counterRef, transaction) {
+  try {
+    const counter = await counterRef.get();
+    if (counter.data && Number.isSafeInteger(counter.data.value)) return counter.data.value;
+  } catch (error) {
+    const message = String(error && (error.errMsg || error.message || error));
+    if (!/document.*not.*exist|not.*found|does not exist|DATABASE_DOCUMENT_NOT_EXIST/i.test(message)) throw error;
+  }
+
+  // 计数器意外丢失但已有商品时，从最大商品编号恢复，避免重新生成 SP000001。
+  const latest = await transaction.collection("products").orderBy("productCode", "desc").limit(1).get();
+  const match = latest.data[0] && /^SP(\d{6})$/.exec(latest.data[0].productCode || "");
+  return match ? Number(match[1]) : 0;
+}
+
 exports.main = async (event) => {
   const { OPENID:openid } = cloud.getWXContext();
   if (!openid) return fail("UNAUTHORIZED", "无法识别当前微信用户");
@@ -85,8 +100,8 @@ exports.main = async (event) => {
     const now = db.serverDate();
     const transactionResult = await db.runTransaction(async (transaction) => {
       const counterRef = transaction.collection("settings").doc("productCode");
-      const counter = await counterRef.get();
-      const sequence = (counter.data && Number.isSafeInteger(counter.data.value) ? counter.data.value : 0) + 1;
+      // 测试数据清理或首次部署后计数器可能尚不存在，事务内按 0 初始化。
+      const sequence = (await getCounterValue(counterRef, transaction)) + 1;
       const productCode = formatProductCode(sequence);
       await counterRef.set({ data:{ value:sequence, updatedAt:now } });
       const product = { productCode, ...productInput, enabled:true, status:"active", hasVariants:input.hasVariants, createdBy:openid, createdByName:user.name, updatedBy:openid, updatedByName:user.name, createdAt:now, updatedAt:now };

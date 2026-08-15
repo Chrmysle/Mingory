@@ -1,3 +1,5 @@
+<auth-gate status="{{authStatus}}" message="{{authMessage}}" bindretry="retryAuthorization" />
+<block wx:if="{{authStatus === 'authorized'}}">
 <view class="form-page">
   <view class="form-section surface">
     <view class="section-title">商品信息</view>
@@ -37,3 +39,4 @@
   <button class="submit primary-button" bindtap="submit" loading="{{submitting}}" disabled="{{submitting||uploading}}">保存商品</button>
   <button class="continue secondary-button" bindtap="submitAndContinue" disabled="{{submitting||uploading}}">保存并继续新增</button>
 </view>
+</block>

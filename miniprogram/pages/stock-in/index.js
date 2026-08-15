@@ -1,9 +1,10 @@
 const productService = require("../../services/product");
 const inventoryService = require("../../services/inventory");
 const { formatCent, yuanToCent } = require("../../utils/money");
+const { withAuth } = require("../../utils/auth-page");
 const { createInventoryRequestId } = require("../../utils/request-id");
 
-Page({
+Page(withAuth({
   data: { product: null, variant: null, quantity: "", newCostPrice: "", remark: "", afterStock: "--", loading: true, submitting: false, error: "", result: null, returnLabel: "返回商品" },
   onLoad(options) {
     this.variantId = options.variantId || "";
@@ -44,4 +45,4 @@ Page({
     finally { this.setData({ submitting: false }); }
   },
   back() { wx.navigateBack(); },
-});
+}));

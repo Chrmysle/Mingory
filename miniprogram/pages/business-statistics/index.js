@@ -1,10 +1,11 @@
 const { getStatisticsDashboard } = require("../../services/statistics");
 const { getSupplierRestock } = require("../../services/inventory");
 const { getPresetRange, getCustomRange, formatBeijingDate } = require("../../utils/time-range");
+const { withAuth } = require("../../utils/auth-page");
 const { formatCent } = require("../../utils/money");
 const { formatSummary, buildTrend, buildDaily, buildRanking, buildComposition, buildSupplierRanking } = require("../../utils/statistics-dashboard-view");
 
-Page({
+Page(withAuth({
   data: {
     type: "month",
     rangeLabel: "本月",
@@ -121,4 +122,4 @@ Page({
   },
   openInventory() { wx.switchTab({ url: "/pages/inventory/index" }); },
   openDay(event) { const date = event.currentTarget.dataset.date; if (date) wx.navigateTo({ url: `/pages/sales/index?date=${encodeURIComponent(date)}` }); },
-});
+}));

@@ -1,5 +1,6 @@
 .donut-shell { position: relative; width: 100%; max-width: 300rpx; height: 300rpx; margin: 0 auto; overflow: hidden; }
-.donut { display: block; width: 100%; max-width: 300rpx; height: 300rpx; }
+.donut-ring { position: absolute; top: 4rpx; right: 4rpx; bottom: 4rpx; left: 4rpx; border-radius: 50%; }
+.donut-hole { position: absolute; top: 38rpx; right: 38rpx; bottom: 38rpx; left: 38rpx; border-radius: 50%; background: var(--color-surface); }
 .center { position: absolute; top: 76rpx; right: 76rpx; bottom: 76rpx; left: 76rpx; display: flex; align-items: center; justify-content: center; flex-direction: column; text-align: center; pointer-events: none; }
 .center text:first-child { max-width: 130rpx; overflow: hidden; color: var(--color-text-tertiary); font-size: 21rpx; text-overflow: ellipsis; white-space: nowrap; }
 .center text:nth-child(2) { margin-top: 3rpx; font-size: 25rpx; font-weight: 700; }

@@ -2,10 +2,6 @@
 .filters { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 4rpx; padding: 6rpx; border-radius: 14rpx; background: var(--color-surface); }
 .filters button { min-width: 0; min-height: 70rpx; margin: 0; padding: 0; color: var(--color-text-secondary); font-size: 24rpx; font-weight: 500; background: transparent; }
 .filters .active { color: #07121e; font-weight: 600; background: var(--color-primary); }
-.status-filters { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 6rpx; margin-top: 14rpx; padding: 6rpx; border-radius: 14rpx; background: var(--color-surface); }
-.status-filters button { min-height: 66rpx; margin: 0; padding: 0; color: var(--color-text-secondary); font-size: 24rpx; background: transparent; }
-.status-filters .active { color: #07121e; background: var(--color-primary); }
-.status-filters .active.cancelled { color: #1d0807; background: var(--color-danger); }
 .custom { margin-top: 16rpx; padding: 22rpx; border: 1rpx solid var(--color-border); border-radius: var(--radius-md); background: var(--color-surface); }
 .custom > view { display: flex; align-items: center; justify-content: space-between; }
 .custom picker { flex: 1; padding: 20rpx 12rpx; border-radius: var(--radius-sm); text-align: center; background: var(--color-surface-subtle); }
@@ -14,8 +10,6 @@
 .range { padding: 22rpx 4rpx 12rpx; color: var(--color-text-tertiary); font-size: 24rpx; }
 .sale-item { margin-bottom: 14rpx; padding: 25rpx 26rpx; border: 1rpx solid var(--color-border); border-radius: var(--radius-md); background: var(--color-surface); transition: transform 120ms var(--ease-out), opacity 120ms ease; }
 .sale-item:active { transform: scale(0.98); }
-.cancelled-item { opacity: .72; }
-.cancelled-badge { margin-left: 8rpx; padding: 3rpx 9rpx; border-radius: 999rpx; color: var(--color-danger); font-size: 20rpx; background: var(--color-danger-soft); }
 .top,.middle,.meta { display: flex; justify-content: space-between; gap: 20rpx; }
 .name { font-size: 31rpx; font-weight: 600; }
 .spec { margin-top: 5rpx; color: var(--color-primary); font-size: 24rpx; }

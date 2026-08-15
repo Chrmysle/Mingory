@@ -1,9 +1,10 @@
 const productService=require("../../services/product");
 const {toProductPayload}=require("../../utils/product-form");
 const {formatCent}=require("../../utils/money");
+const {withAuth}=require("../../utils/auth-page");
 const {scanBarcode}=require("../../utils/scan-barcode");
 
-Page({
+Page(withAuth({
   data:{product:null,variants:[],hasVariants:false,unitPresets:["个","件","袋","包","瓶","盒","卷","套","米","斤"],loading:true,submitting:false,uploading:false,error:""},
   onLoad(options){this.productId=options.id;this.load();},
   onProductInput(e){this.setData({[`product.${e.currentTarget.dataset.field}`]:e.detail.value});},
@@ -31,4 +32,4 @@ Page({
     this.setData({submitting:true});
     try{await productService.updateProduct({productId:this.productId,product:payload.product,variants:payload.variants});wx.showToast({title:"保存成功"});setTimeout(()=>wx.navigateBack(),500);}catch(error){wx.showToast({title:error.message,icon:"none"});}finally{this.setData({submitting:false});}
   },
-});
+}));

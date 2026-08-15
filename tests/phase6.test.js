@@ -106,7 +106,7 @@ function loadCloudFunction(name, sdk) {
 
 function sale(id, createdAt, overrides = {}) {
   return {
-    _id: id, requestId: id, status: "normal", createdAt: new Date(createdAt), productName: "透明胶带", specification: "5cm", productCode: "SP000001", variantCode: "SP000001-V001", unit: "卷",
+    _id: id, requestId: id, createdAt: new Date(createdAt), productName: "透明胶带", specification: "5cm", productCode: "SP000001", variantCode: "SP000001-V001", unit: "卷",
     quantity: 1, unitPriceCent: 500, costPriceCent: 200, totalAmountCent: 500, totalCostCent: 200, grossProfitCent: 300, operatorName: "妈妈", ...overrides,
   };
 }
@@ -136,7 +136,6 @@ async function testStatistics() {
     sale("LINE_ORDER_01", end - 3, { orderId: "SALE_MULTI_ORDER", orderCountContribution: 1, totalAmountCent: 0, totalCostCent: 0, grossProfitCent: 0 }),
     sale("LINE_ORDER_02", end - 2, { orderId: "SALE_MULTI_ORDER", orderCountContribution: 0, totalAmountCent: 0, totalCostCent: 0, grossProfitCent: 0 }),
     sale("END", end, { totalAmountCent: 9999, totalCostCent: 0, grossProfitCent: 9999 }),
-    sale("CANCELLED", start + 2000, { status: "cancelled", totalAmountCent: 9999, totalCostCent: 0, grossProfitCent: 9999 }),
   ]);
   const getStatistics = loadCloudFunction("getBusinessStatistics", sdk);
   const result = await getStatistics({ startTime: start, endTime: end });
@@ -160,27 +159,22 @@ async function testSalesPaginationAndSnapshot() {
   const records = Array.from({ length: 25 }, (_, index) => sale(`SALE_${index}`, start + index * 1000, { productName: index === 3 ? "历史商品名" : "透明胶带", specification: index === 3 ? "历史规格" : "5cm", costPriceCent: index === 3 ? 350 : 200 }));
   records.push(sale("SALE_LINE_1", start + 60000, { orderId: "SALE_MULTI_DETAIL", lineNumber: 1, orderCountContribution: 1, productName: "女靴", specification: "39码", totalAmountCent: 15900, totalCostCent: 9000, grossProfitCent: 6900 }));
   records.push(sale("SALE_LINE_2", start + 60000, { orderId: "SALE_MULTI_DETAIL", lineNumber: 2, orderCountContribution: 0, productName: "鞋垫", specification: "", isGift: true, unitPriceCent: 0, totalAmountCent: 0, totalCostCent: 200, grossProfitCent: -200 }));
-  records.push(sale("CANCELLED", start + 50000, { status: "cancelled" }));
   const sdk = createFixture(records);
   sdk.__state.sale_orders.set("SALE_MULTI_DETAIL", {
-    _id: "SALE_MULTI_DETAIL", requestId: "SALE_MULTI_DETAIL", status: "normal", createdAt: new Date(start + 60000),
+    _id: "SALE_MULTI_DETAIL", requestId: "SALE_MULTI_DETAIL", createdAt: new Date(start + 60000),
     itemCount: 2, totalQuantity: 2, totalAmountCent: 15900, totalCostCent: 9200, grossProfitCent: 6700, operatorName: "妈妈",
   });
   const getSales = loadCloudFunction("getSales", sdk);
   const page1 = await getSales({ startTime: start, endTime: end, page: 1, pageSize: 20 });
   const page2 = await getSales({ startTime: start, endTime: end, page: 2, pageSize: 20 });
-  const cancelledPage = await getSales({ startTime: start, endTime: end, status: "cancelled", page: 1, pageSize: 20 });
-  const allPage = await getSales({ startTime: start, endTime: end, status: "all", page: 1, pageSize: 30 });
   assert.equal(page1.data.list.length, 20);
   assert.equal(page1.data.hasMore, true);
   assert.equal(page2.data.list.length, 6);
   assert.equal(page2.data.hasMore, false);
   const ids = [...page1.data.list, ...page2.data.list].map((item) => item._id);
   assert.equal(new Set(ids).size, 26);
-  assert.equal(ids.includes("CANCELLED"), false);
-  assert.equal(cancelledPage.data.list.length, 1);
-  assert.equal(cancelledPage.data.list[0].status, "cancelled");
-  assert.equal(allPage.data.list.some((item) => item._id === "CANCELLED"), true);
+  const invalidStatus = await getSales({ startTime: start, endTime: end, status: "cancelled", page: 1, pageSize: 20 });
+  assert.equal(invalidStatus.code, "INVALID_PARAMETER");
   const grouped = [...page1.data.list, ...page2.data.list].find((item) => item._id === "SALE_MULTI_DETAIL");
   assert.equal(grouped.itemCount, 2);
   assert.equal(grouped.totalAmountCent, 15900);
@@ -209,7 +203,7 @@ async function run() {
   testMoneyDisplay();
   await testStatistics();
   await testSalesPaginationAndSnapshot();
-  console.log("Phase 6 tests passed: Beijing boundaries, week/month/custom ranges, aggregation, zero/negative sales, status filter, empty data, pagination, ordering, snapshot detail.");
+  console.log("Phase 6 tests passed: Beijing boundaries, week/month/custom ranges, aggregation of existing sales, empty data, pagination, ordering and snapshot detail.");
 }
 
 run().catch((error) => { console.error(error); process.exitCode = 1; });

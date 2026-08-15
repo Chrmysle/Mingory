@@ -1,6 +1,7 @@
 const { getSupplierRestock } = require("../../services/inventory");
+const { withAuth } = require("../../utils/auth-page");
 
-Page({
+Page(withAuth({
   data: {
     supplier: "",
     displayName: "",
@@ -76,4 +77,4 @@ Page({
     if (!variantId) return;
     wx.navigateTo({ url: `/pages/stock-in/index?variantId=${encodeURIComponent(variantId)}&source=restock` });
   },
-});
+}));

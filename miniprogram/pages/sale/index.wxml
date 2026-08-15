@@ -1,3 +1,5 @@
+<auth-gate status="{{authStatus}}" message="{{authMessage}}" bindretry="retryAuthorization" />
+<block wx:if="{{authStatus === 'authorized'}}">
 <view class="page-shell sale-page">
   <view class="page-state" wx:if="{{loading}}">正在读取商品…</view><view class="page-state error-text" wx:elif="{{error}}">{{error}}</view>
   <block wx:elif="{{product && variant}}">
@@ -22,3 +24,4 @@
     </block>
   </block>
 </view>
+</block>

@@ -14,10 +14,10 @@ const expectedTabs = [
 ];
 
 assert.deepEqual(app.tabBar.list.map((item) => item.pagePath), expectedTabs);
-assert.equal(app.window.navigationBarTextStyle, "white");
-assert.equal(app.window.backgroundColor, "#111317");
-assert.equal(app.window.backgroundColorTop, "#111317");
-assert.equal(app.window.backgroundColorBottom, "#111317");
+assert.equal(app.window.navigationBarTextStyle, "black");
+assert.equal(app.window.backgroundColor, "#FFFFFF");
+assert.equal(app.window.backgroundColorTop, "#FFFFFF");
+assert.equal(app.window.backgroundColorBottom, "#FFFFFF");
 
 for (const item of app.tabBar.list) {
   for (const extension of ["js", "json", "wxml", "wxss"]) {
@@ -25,6 +25,10 @@ for (const item of app.tabBar.list) {
   }
   assert.equal(fs.existsSync(path.join(root, "miniprogram", item.iconPath)), true, `${item.iconPath} missing`);
   assert.equal(fs.existsSync(path.join(root, "miniprogram", item.selectedIconPath)), true, `${item.selectedIconPath} missing`);
+  const pageConfig = JSON.parse(read(`miniprogram/${item.pagePath}.json`));
+  assert.equal(pageConfig.backgroundColor, "#FFFFFF", `${item.pagePath} must match the native white first frame`);
+  assert.equal(pageConfig.backgroundColorTop, "#FFFFFF", `${item.pagePath} top background must stay white`);
+  assert.equal(pageConfig.backgroundColorBottom, "#FFFFFF", `${item.pagePath} bottom background must stay white`);
 }
 
 const allPageCode = fs.readdirSync(path.join(root, "miniprogram/pages"), { withFileTypes: true })
@@ -42,6 +46,8 @@ for (const token of ["--color-bg", "--color-surface", "--color-text-secondary", 
 assert.equal(tokens.includes("transition: all"), false);
 assert.equal(tokens.includes("overflow-x: hidden"), true);
 assert.equal(tokens.includes("max-width: 100%"), true);
+assert.match(tokens, /page\s*\{[\s\S]*height:\s*100%;[\s\S]*min-height:\s*100vh;/);
+for (const rootClass of [".page-shell", ".home-page", ".form-page", ".page"]) assert.equal(tokens.includes(rootClass), true, `${rootClass} first-frame backing missing`);
 for (const pageStyle of ["pages/index/index.wxss", "pages/inventory/index.wxss", "pages/product-list/index.wxss", "pages/business-statistics/index.wxss"]) {
   assert.equal(read(`miniprogram/${pageStyle}`).includes("minmax(0, 1fr)"), true, `${pageStyle} must use shrinkable grid tracks`);
 }
@@ -55,5 +61,26 @@ assert.equal(statisticsPage.includes("donut-chart"), true);
 assert.equal(fs.existsSync(path.join(root, "miniprogram/components/line-chart/index.js")), true);
 assert.equal(fs.existsSync(path.join(root, "miniprogram/components/donut-chart/index.js")), true);
 assert.equal(fs.existsSync(path.join(root, "plans/navigation-ui-restructure.md")), true);
+const donutMarkup = read("miniprogram/components/donut-chart/index.wxml");
+const donutCode = read("miniprogram/components/donut-chart/index.js");
+assert.equal(donutMarkup.includes("<canvas"), false, "donut chart must stay in the normal scroll layer on real devices");
+assert.equal(donutMarkup.includes("donut-ring"), true);
+assert.equal(donutCode.includes("conic-gradient"), true);
 
-console.log("UI restructure tests passed: native five-tab architecture, icons, page files, navigation rules, dark tokens and progressive variant actions.");
+const inventoryPage = read("miniprogram/pages/inventory/index.wxml");
+for (const removedEntry of ["进货记录", "库存流水", "库存盘点"]) assert.equal(inventoryPage.includes(removedEntry), false, `${removedEntry} should not remain a standalone inventory entry`);
+assert.equal(inventoryPage.includes("进货助手"), true, "进货助手 should remain in inventory hub");
+assert.equal(inventoryPage.includes("商品库存"), false, "商品库存 duplicates the product tab and should be removed");
+assert.equal(app.pages.includes("pages/inventory-logs/index"), false);
+const productDetailPage = read("miniprogram/pages/product-detail/index.wxml");
+assert.equal(productDetailPage.includes("调整 / 盘点"), true);
+assert.equal(productDetailPage.includes('bindtap="inventoryLogs"'), false);
+
+const homePage = read("miniprogram/pages/index/index.wxml");
+for (const marker of ["recentTitle", "recentQuantity", "operatorName", "shortTimeDisplay", "grossProfitDisplay"]) assert.equal(homePage.includes(marker), true, `home recent sale marker ${marker} missing`);
+const lineChart = read("miniprogram/components/line-chart/index.js");
+assert.equal(lineChart.includes("quantityScale(values)"), true);
+assert.equal(lineChart.includes("Math.round(value)"), true);
+assert.equal(lineChart.includes("max - range * ratio"), false, "axis labels must use normalized ticks instead of raw repeating decimals");
+
+console.log("UI restructure tests passed: native five-tab architecture, icons, page files, navigation rules, light tokens and progressive variant actions.");

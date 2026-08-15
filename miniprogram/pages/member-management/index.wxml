@@ -1,0 +1,25 @@
+<auth-gate status="{{authStatus}}" message="{{authMessage}}" bindretry="retryAuthorization" />
+<block wx:if="{{authStatus === 'authorized'}}">
+<view class="page-shell member-page">
+  <view class="page-title">成员管理</view>
+  <view class="page-subtitle">批准后，对方即可访问店内商品、销售、库存和经营数据</view>
+
+  <view class="page-state error-text" wx:if="{{error}}"><view class="page-state-title error-text">成员信息加载失败</view><view class="page-state-message">{{error}}</view></view>
+
+  <view class="section-heading"><view><view class="section-title">待处理申请</view><view class="section-caption">{{pending.length}} 个申请等待处理</view></view></view>
+  <view class="page-state surface" wx:if="{{!loading&&!error&&!pending.length}}"><view class="page-state-title">暂无访问申请</view><view class="page-state-message">让对方打开小程序并填写姓名申请即可</view></view>
+  <view class="request-list" wx:if="{{pending.length}}">
+    <view class="request-card surface" wx:for="{{pending}}" wx:key="requestId">
+      <view class="request-meta">申请于 {{item.createdAtDisplay}}</view>
+      <input class="member-name-input" value="{{item.approvedName}}" maxlength="20" data-index="{{index}}" bindinput="updateName" />
+      <view class="request-actions"><button class="reject-button" data-index="{{index}}" bindtap="reject">拒绝</button><button class="approve-button" data-index="{{index}}" bindtap="approve">批准加入</button></view>
+    </view>
+  </view>
+
+  <view class="section-heading"><view><view class="section-title">当前成员</view><view class="section-caption">已授权 {{members.length}} 人</view></view></view>
+  <view class="member-list surface" wx:if="{{members.length}}">
+    <view class="member-row" wx:for="{{members}}" wx:key="userId"><view class="member-avatar">{{item.initial}}</view><view class="member-name">{{item.name}}</view><view class="enabled-badge">可访问</view></view>
+  </view>
+  <view class="list-footer" wx:if="{{loading}}">正在加载…</view>
+</view>
+</block>

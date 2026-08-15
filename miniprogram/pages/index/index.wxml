@@ -1,12 +1,12 @@
+<auth-gate status="{{authStatus}}" message="{{authMessage}}" bindretry="retryAuthorization" />
+<block wx:if="{{authStatus === 'authorized'}}">
 <view class="container home-page">
   <view class="home-header">
-    <view><view class="brand">Mingory</view><view class="subtitle" wx:if="{{status === 'ready'}}">你好，{{user.name}}</view><view class="subtitle" wx:else>轻量进销存，清楚每一笔生意</view></view>
-    <view class="ready-badge" wx:if="{{status === 'ready'}}">今日</view>
+    <view><view class="brand">Mingory</view><view class="subtitle">你好，{{authUser.name}}</view></view>
+    <view class="ready-badge tap-target" bindtap="openMembers">成员管理</view>
   </view>
 
-  <view class="page-state surface" wx:if="{{status === 'loading'}}"><view class="page-state-title">正在连接云服务</view><view class="page-state-message">{{message}}</view></view>
-
-  <block wx:elif="{{status === 'ready'}}">
+  <block>
     <view class="business-panel surface">
       <view class="panel-header"><view class="section-title">今日经营</view><view class="detail-link tap-target" bindtap="openStatistics">查看详情</view></view>
       <view class="statistics-state" wx:if="{{statisticsLoading&&!today}}">正在加载今日数据…</view>
@@ -38,13 +38,15 @@
     <view class="compact-empty surface" wx:else>目前没有需要补货的商品</view>
 
     <view class="section-heading"><view class="section-title">今日最近销售</view><view class="detail-link tap-target" bindtap="openSales">全部销售</view></view>
-    <view class="compact-list surface" wx:if="{{recentSales.length}}">
-      <view class="compact-row tap-target" wx:for="{{recentSales}}" wx:key="_id" data-id="{{item._id}}" bindtap="openOrder"><view><view class="row-name">{{item.itemCount}}种商品 · {{item.totalQuantity}}件</view><view class="row-meta">{{item.firstProductName}}{{item.itemCount>1?' 等':''}} · {{item.timeDisplay}}</view></view><view class="sale-amount money-display">¥{{item.totalAmountDisplay}}</view></view>
+    <view class="compact-list recent-sales surface" wx:if="{{recentSales.length}}">
+      <view class="recent-sale-row tap-target" wx:for="{{recentSales}}" wx:key="_id" data-id="{{item._id}}" bindtap="openOrder">
+        <view class="recent-sale-main"><view class="row-name">{{item.recentTitle}}</view><view class="row-meta">{{item.recentQuantity}} · {{item.operatorName||'未知操作人'}} · {{item.shortTimeDisplay}}</view></view>
+        <view class="recent-sale-numbers"><view class="sale-amount money-display">¥{{item.totalAmountDisplay}}</view><view class="sale-profit {{item.grossProfitCent<0?'negative':''}}">毛利 ¥{{item.grossProfitDisplay}}</view></view>
+      </view>
     </view>
     <view class="compact-empty surface" wx:else>今天还没有销售记录</view>
     <view class="refresh-error" wx:if="{{dashboardError}}">部分数据刷新失败：{{dashboardError}}</view>
   </block>
 
-  <view class="page-state surface warning-state" wx:elif="{{status === 'unauthorized'}}"><view class="page-state-title">暂时无法使用</view><view class="page-state-message">{{message}}</view><view class="openid-box" wx:if="{{openid}}"><text class="openid-label">当前用户 OpenID</text><text class="openid-value" selectable="true">{{openid}}</text><button class="copy-button secondary-button" size="mini" bindtap="copyOpenId">复制 OpenID</button></view></view>
-  <view class="page-state surface" wx:else><view class="page-state-title error-text">初始化失败</view><view class="page-state-message">{{message}}</view></view>
 </view>
+</block>

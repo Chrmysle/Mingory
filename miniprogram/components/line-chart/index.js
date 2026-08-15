@@ -35,16 +35,32 @@ Component({
         this.draw();
       });
     },
+    trimNumber(value, decimals) {
+      return Number(value).toFixed(decimals).replace(/\.?0+$/, "");
+    },
     formatValue(value, compact = false) {
       if (value == null) return "--";
       if (this.properties.valueType === "money") {
         const amount = value / 100;
-        if (compact && Math.abs(amount) >= 10000) return `¥${(amount / 10000).toFixed(1)}万`;
-        if (compact && Math.abs(amount) >= 1000) return `¥${(amount / 1000).toFixed(1)}千`;
-        return `¥${amount.toFixed(2)}`;
+        if (compact && Math.abs(amount) >= 10000) return `¥${this.trimNumber(amount / 10000, 1)}万`;
+        if (compact && Math.abs(amount) >= 1000) return `¥${this.trimNumber(amount / 1000, 1)}千`;
+        return `¥${this.trimNumber(amount, 2)}`;
       }
       if (this.properties.valueType === "percent") return `${Number(value).toFixed(1)}%`;
-      return `${value}`;
+      return `${Math.round(value)}`;
+    },
+    quantityScale(values) {
+      const maximum = Math.max(0, ...values.map((value) => Math.ceil(value)));
+      if (maximum === 0) return { min: 0, max: 1, ticks: [1, 0] };
+      const rawStep = maximum / 4;
+      const magnitude = 10 ** Math.floor(Math.log10(rawStep));
+      const normalized = rawStep / magnitude;
+      const niceNormalized = normalized <= 1 ? 1 : (normalized <= 2 ? 2 : (normalized <= 5 ? 5 : 10));
+      const step = Math.max(1, niceNormalized * magnitude);
+      const max = step * Math.ceil(maximum / step);
+      const ticks = [];
+      for (let value = max; value >= 0; value -= step) ticks.push(value);
+      return { min: 0, max, ticks };
     },
     draw() {
       if (!this.context || !this.width || !this.height) return;
@@ -57,22 +73,31 @@ Component({
       const chartWidth = this.width - padding.left - padding.right;
       const chartHeight = this.height - padding.top - padding.bottom;
       const values = series.map((item) => item.value);
-      let min = Math.min(0, ...values);
-      let max = Math.max(0, ...values);
-      if (max === min) { max += 1; min -= 1; }
+      let min;
+      let max;
+      let ticks;
+      if (this.properties.valueType === "quantity") {
+        ({ min, max, ticks } = this.quantityScale(values));
+      } else {
+        min = Math.min(0, ...values);
+        max = Math.max(0, ...values);
+        if (max === min) max = this.properties.valueType === "money" ? 100 : 1;
+        const range = max - min;
+        ticks = Array.from({ length: 4 }, (_, index) => max - range * index / 3);
+      }
       const range = max - min;
 
       ctx.font = "10px -apple-system, BlinkMacSystemFont, sans-serif";
       ctx.textBaseline = "middle";
       ctx.lineWidth = 1;
-      for (let index = 0; index <= 3; index += 1) {
-        const ratio = index / 3;
+      for (let index = 0; index < ticks.length; index += 1) {
+        const ratio = ticks.length === 1 ? 0 : index / (ticks.length - 1);
         const y = padding.top + chartHeight * ratio;
         ctx.strokeStyle = "rgba(127,134,145,0.18)";
         ctx.beginPath(); ctx.moveTo(padding.left, y); ctx.lineTo(this.width - padding.right, y); ctx.stroke();
         ctx.fillStyle = "#7f8691";
         ctx.textAlign = "right";
-        ctx.fillText(this.formatValue(max - range * ratio, true), padding.left - 7, y);
+        ctx.fillText(this.formatValue(ticks[index], true), padding.left - 7, y);
       }
 
       this.points = series.map((item, index) => ({

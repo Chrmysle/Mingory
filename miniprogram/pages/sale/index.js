@@ -1,9 +1,10 @@
 const productService = require("../../services/product");
 const { saleProduct } = require("../../services/sale");
 const { yuanToCent, formatCent } = require("../../utils/money");
+const { withAuth } = require("../../utils/auth-page");
 const { createSaleRequestId } = require("../../utils/request-id");
 
-Page({
+Page(withAuth({
   data: {
     product: null,
     variant: null,
@@ -106,4 +107,4 @@ Page({
     wx.redirectTo({ url: `/pages/product-detail/index?id=${this.data.product._id}&variantId=${this.variantId}` });
   },
   backToSell() { wx.switchTab({ url: "/pages/sell/index" }); },
-});
+}));

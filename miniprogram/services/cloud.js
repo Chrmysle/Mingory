@@ -9,6 +9,10 @@ function callFunction(name, data = {}) {
       );
       error.code = (result && result.code) || "CLOUD_FUNCTION_ERROR";
       error.data = (result && result.data) || null;
+      if (error.code === "UNAUTHORIZED" && typeof getApp === "function") {
+        const app = getApp();
+        if (app && typeof app.handleUnauthorized === "function") app.handleUnauthorized(error);
+      }
       throw error;
     })
     .catch((error) => {

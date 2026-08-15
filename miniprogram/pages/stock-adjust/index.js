@@ -1,8 +1,9 @@
 const productService = require("../../services/product");
 const inventoryService = require("../../services/inventory");
 const { createInventoryRequestId } = require("../../utils/request-id");
+const { withAuth } = require("../../utils/auth-page");
 
-Page({
+Page(withAuth({
   data: { product: null, variant: null, type: "MANUAL_ADD", quantity: "", actualStock: "", remark: "", afterStock: "--", loading: true, submitting: false, error: "", result: null },
   onLoad(options) {
     this.variantId = options.variantId || "";
@@ -57,4 +58,4 @@ Page({
     } finally { this.setData({ submitting: false }); }
   },
   back() { wx.navigateBack(); },
-});
+}));

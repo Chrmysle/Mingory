@@ -1,1 +1,8 @@
-{"navigationBarTitleText":"商品","enablePullDownRefresh":true,"backgroundTextStyle":"light"}
+{
+  "navigationBarTitleText": "商品",
+  "backgroundColor": "#FFFFFF",
+  "backgroundColorTop": "#FFFFFF",
+  "backgroundColorBottom": "#FFFFFF",
+  "enablePullDownRefresh": true,
+  "backgroundTextStyle": "dark"
+}

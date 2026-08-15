@@ -1,3 +1,5 @@
+<auth-gate status="{{authStatus}}" message="{{authMessage}}" bindretry="retryAuthorization" />
+<block wx:if="{{authStatus === 'authorized'}}">
 <view class="page-state" wx:if="{{loading}}">正在加载商品…</view><view class="page-state error-text" wx:elif="{{error}}">{{error}}</view>
 <view class="form-page" wx:else>
   <view class="notice">商品编号和库存不能在普通编辑中修改；库存请通过入库或库存调整操作。</view>
@@ -26,3 +28,4 @@
   </view>
   <button class="submit primary-button" bindtap="submit" loading="{{submitting}}" disabled="{{submitting||uploading}}">保存修改</button>
 </view>
+</block>

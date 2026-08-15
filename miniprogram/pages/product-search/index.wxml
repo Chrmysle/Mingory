@@ -1,3 +1,5 @@
+<auth-gate status="{{authStatus}}" message="{{authMessage}}" bindretry="retryAuthorization" />
+<block wx:if="{{authStatus === 'authorized'}}">
 <view class="page-shell">
   <view class="search-bar">
     <input class="search-input" value="{{keyword}}" bindinput="onInput" bindconfirm="submit" confirm-type="search" placeholder="名称、规格、编号或条码"/>
@@ -19,3 +21,4 @@
   </view>
   <view class="list-footer" wx:if="{{loading}}">正在搜索…</view><view class="list-footer" wx:elif="{{list.length&&!hasMore}}">已显示全部结果</view>
 </view>
+</block>

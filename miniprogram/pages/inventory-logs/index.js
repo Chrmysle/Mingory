@@ -1,8 +1,9 @@
 const inventoryService = require("../../services/inventory");
 const { formatDateTime } = require("../../utils/date");
 const { formatCent } = require("../../utils/money");
+const { withAuth } = require("../../utils/auth-page");
 
-const TYPE_LABELS = { SALE: "销售出库", SALE_CANCEL: "销售撤销", STOCK_IN: "商品入库", MANUAL_ADD: "人工增加", MANUAL_SUBTRACT: "人工减少", STOCKTAKE: "盘点调整" };
+const TYPE_LABELS = { SALE: "销售出库", STOCK_IN: "商品入库", MANUAL_ADD: "人工增加", MANUAL_SUBTRACT: "人工减少", STOCKTAKE: "盘点调整" };
 const withDisplay = (item) => ({
   ...item,
   typeLabel: TYPE_LABELS[item.type] || item.type,
@@ -11,7 +12,7 @@ const withDisplay = (item) => ({
   newCostPriceDisplay: Number.isSafeInteger(item.newCostPriceCent) ? formatCent(item.newCostPriceCent) : "",
 });
 
-Page({
+Page(withAuth({
   data: { product: null, variant: null, list: [], page: 1, hasMore: true, loading: false, error: "", global: false, title: "库存记录", emptyText: "暂无库存记录" },
   onLoad(options) {
     this.variantId = options.variantId || "";
@@ -37,4 +38,4 @@ Page({
     } catch (error) { this.setData({ error: error.message }); }
     finally { this.setData({ loading: false }); }
   },
-});
+}));

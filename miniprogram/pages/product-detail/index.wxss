@@ -36,7 +36,7 @@
 .suggestions text:first-child { color: var(--color-text-tertiary); font-size: 22rpx; }
 .suggestions text:last-child { margin-top: 4rpx; font-size: 27rpx; font-weight: 600; }
 .sell { margin-top: 22rpx; }
-.variant-actions { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10rpx; margin-top: 12rpx; }
+.variant-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10rpx; margin-top: 12rpx; }
 .variant-actions button { min-height: 76rpx; margin: 0; padding: 0 4rpx; color: var(--color-text-secondary); font-size: 24rpx; background: var(--color-surface-subtle); }
 .variant-actions .stock-in { color: var(--color-primary); background: var(--color-primary-soft); }
 .variant-actions button[disabled] { color: var(--color-text-tertiary); background: var(--color-border); }

@@ -1,6 +1,6 @@
 .chart-shell { position: relative; box-sizing: border-box; width: 100%; max-width: 100%; height: 300rpx; overflow: hidden; }
 .chart { display: block; width: 100%; max-width: 100%; height: 300rpx; }
-.tooltip { position: absolute; top: 8rpx; display: flex; width: 296rpx; max-width: calc(100% - 16rpx); flex-direction: column; padding: 10rpx 14rpx; border: 1rpx solid var(--color-border); border-radius: 10rpx; color: var(--color-text); background: rgba(32,36,42,0.94); pointer-events: none; }
+.tooltip { position: absolute; top: 8rpx; display: flex; width: 296rpx; max-width: calc(100% - 16rpx); flex-direction: column; padding: 10rpx 14rpx; border: 1rpx solid var(--color-border); border-radius: 10rpx; color: var(--color-text); background: rgba(255,255,255,0.96); box-shadow: 0 8rpx 28rpx rgba(23,25,29,0.12); pointer-events: none; }
 .tooltip text:first-child { color: var(--color-text-secondary); font-size: 21rpx; }
 .tooltip text:last-child { margin-top: 2rpx; font-size: 25rpx; font-weight: 650; }
 .empty { position: absolute; top: 0; right: 0; bottom: 0; left: 0; display: flex; align-items: center; justify-content: center; color: var(--color-text-tertiary); font-size: 24rpx; pointer-events: none; }
