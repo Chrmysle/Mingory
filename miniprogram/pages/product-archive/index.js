@@ -1,6 +1,5 @@
 const productService = require("../../services/product");
-const { withProductSummary } = require("../../utils/product-view");
-const { scanProduct } = require("../../utils/scan-product");
+const { formatDateTime } = require("../../utils/date");
 
 Page({
   data: { list: [], page: 1, hasMore: true, loading: false, error: "" },
@@ -14,14 +13,11 @@ Page({
     if (this.data.loading || !this.data.hasMore) return;
     this.setData({ loading: true });
     try {
-      const result = await productService.searchProducts({ keyword: "", page: this.data.page, pageSize: 20 });
-      this.setData({ list: this.data.list.concat(result.list.map(withProductSummary)), page: this.data.page + 1, hasMore: result.hasMore });
+      const result = await productService.manageArchivedProducts({ action: "list", page: this.data.page, pageSize: 20 });
+      const list = result.list.map((item) => ({ ...item, archivedAtDisplay: formatDateTime(item.archivedAt) }));
+      this.setData({ list: this.data.list.concat(list), page: this.data.page + 1, hasMore: result.hasMore });
     } catch (error) { this.setData({ error: error.message }); }
     finally { this.setData({ loading: false }); }
   },
-  open(e) { wx.navigateTo({ url: `/pages/product-detail/index?id=${e.currentTarget.dataset.id}` }); },
-  create() { wx.navigateTo({ url: "/pages/product-create/index" }); },
-  openArchive() { wx.navigateTo({ url: "/pages/product-archive/index" }); },
-  search() { wx.navigateTo({ url: "/pages/product-search/index" }); },
-  scanProduct,
+  open(event) { wx.navigateTo({ url: `/pages/product-detail/index?id=${event.currentTarget.dataset.id}&archive=1` }); },
 });

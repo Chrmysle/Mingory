@@ -1,9 +1,10 @@
 const productService = require("../../services/product");
 const { withProductDetail } = require("../../utils/product-view");
 const cart = require("../../utils/sale-cart");
+const { formatDateTime } = require("../../utils/date");
 
 Page({
-  data: { product: null, variants: [], matchedVariantId: "", expandedVariantId: "", source: "", loading: true, error: "" },
+  data: { product: null, variants: [], matchedVariantId: "", expandedVariantId: "", source: "", loading: true, archiving: false, restoring: false, permanentlyDeleting: false, archiveInfo: {}, error: "" },
   onLoad(options) {
     this.productId = options.id;
     this.matchedVariantId = options.variantId || "";
@@ -19,6 +20,7 @@ Page({
       const matchedVariantId = this.matchedVariantId || data.matchedVariantId || "";
       const expandedVariantId = matchedVariantId || (data.variants.length === 1 ? data.variants[0]._id : this.data.expandedVariantId);
       this.setData({ product: data.product, variants: data.variants, matchedVariantId, expandedVariantId });
+      if (data.product.enabled === false || data.product.status === "archived") await this.loadArchiveInfo();
     } catch (error) { this.setData({ error: error.message }); }
     finally { this.setData({ loading: false }); }
   },
@@ -44,4 +46,50 @@ Page({
     wx.navigateTo({ url: `/pages/${page}/index?variantId=${event.currentTarget.dataset.id}` });
   },
   edit() { wx.navigateTo({ url: `/pages/product-edit/index?id=${this.productId}` }); },
+  async loadArchiveInfo() {
+    const result = await productService.manageArchivedProducts({ action: "inspect", productId: this.productId });
+    this.setData({ archiveInfo: { ...result.references, blockerText: result.references.blockers.join("；"), archivedAtDisplay: formatDateTime(result.product.archivedAt) } });
+  },
+  async archiveProduct() {
+    if (this.data.archiving || !this.data.product || this.data.product.enabled === false) return;
+    const modal = await wx.showModal({
+      title: "归档商品",
+      content: `归档后，“${this.data.product.name}”不会出现在正常商品列表、搜索和销售页面中。历史销售和库存记录不受影响，之后可以在归档中恢复。`,
+      confirmText: "确认归档",
+    });
+    if (!modal.confirm) return;
+    this.setData({ archiving: true });
+    try {
+      await productService.archiveProduct({ productId: this.productId });
+      wx.showToast({ title: "商品已归档", icon: "success" });
+      setTimeout(() => wx.navigateBack({ fail: () => wx.switchTab({ url: "/pages/product-list/index" }) }), 500);
+    } catch (error) {
+      wx.showToast({ title: error.message, icon: "none" });
+      this.setData({ archiving: false });
+    }
+  },
+  async restoreProduct() {
+    if (this.data.restoring) return;
+    const modal = await wx.showModal({ title: "恢复商品", content: "恢复后，商品会重新出现在商品列表、搜索、扫码和销售页面中。", confirmText: "恢复" });
+    if (!modal.confirm) return;
+    this.setData({ restoring: true });
+    try {
+      await productService.manageArchivedProducts({ action: "restore", productId: this.productId });
+      wx.showToast({ title: "商品已恢复", icon: "success" });
+      setTimeout(() => wx.navigateBack({ fail: () => wx.switchTab({ url: "/pages/product-list/index" }) }), 500);
+    } catch (error) { wx.showToast({ title: error.message, icon: "none" }); this.setData({ restoring: false }); }
+  },
+  async permanentlyDeleteProduct() {
+    if (this.data.permanentlyDeleting || !this.data.archiveInfo || !this.data.archiveInfo.canPermanentlyDelete) return;
+    const first = await wx.showModal({ title: "永久删除商品", content: "永久删除后无法恢复，Product 和所属全部 Variant 都会从数据库中移除。", confirmText: "继续", confirmColor: "#ff6b67" });
+    if (!first.confirm) return;
+    const second = await wx.showModal({ title: "再次确认", content: `确定永久删除“${this.data.product.name}”吗？此操作无法撤销。`, confirmText: "永久删除", confirmColor: "#ff6b67" });
+    if (!second.confirm) return;
+    this.setData({ permanentlyDeleting: true });
+    try {
+      await productService.manageArchivedProducts({ action: "permanentDelete", productId: this.productId });
+      wx.showToast({ title: "已永久删除", icon: "success" });
+      setTimeout(() => wx.navigateBack({ fail: () => wx.switchTab({ url: "/pages/product-list/index" }) }), 500);
+    } catch (error) { wx.showToast({ title: error.message, icon: "none" }); this.setData({ permanentlyDeleting: false }); }
+  },
 });

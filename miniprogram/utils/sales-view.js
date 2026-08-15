@@ -19,6 +19,7 @@ function withSaleDisplay(sale) {
     totalCostDisplay: formatSignedCent(sale.totalCostCent),
     grossProfitDisplay: formatSignedCent(sale.grossProfitCent),
     timeDisplay: formatDateTime(sale.createdAt),
+    cancelledAtDisplay: sale.cancelledAt ? formatDateTime(sale.cancelledAt) : "",
   };
 }
 

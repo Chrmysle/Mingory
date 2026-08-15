@@ -4,7 +4,7 @@ const db = cloud.database();
 const _ = db.command;
 
 const PLATFORM_FIELDS = ["userInfo", "tcbContext"];
-const PRODUCT_FIELDS = ["name", "unit", "supplier", "imageFileID", "shelfLocation", "remark", "enabled"];
+const PRODUCT_FIELDS = ["name", "unit", "supplier", "imageFileID", "shelfLocation", "remark"];
 const PRODUCT_LIMITS = { name:100, unit:20, supplier:100, imageFileID:512, shelfLocation:100, remark:500 };
 const VARIANT_FIELDS = ["_id", "specification", "costPriceCent", "salePriceCent", "warningStock", "barcode", "enabled"];
 const fail = (code, message) => ({ success:false, code, message });
@@ -19,13 +19,8 @@ function normalizeProduct(input) {
   if (!input || typeof input !== "object" || Object.keys(input).some((key) => !PRODUCT_FIELDS.includes(key))) throw new Error("商品公共信息包含不允许修改的字段");
   const result = {};
   for (const key of Object.keys(input)) {
-    if (key === "enabled") {
-      if (typeof input.enabled !== "boolean") throw new Error("enabled必须是布尔值");
-      result.enabled = input.enabled;
-    } else {
-      result[key] = cleanText(input[key]);
-      if (result[key].length > PRODUCT_LIMITS[key]) throw new Error(`${key}长度不能超过${PRODUCT_LIMITS[key]}个字符`);
-    }
+    result[key] = cleanText(input[key]);
+    if (result[key].length > PRODUCT_LIMITS[key]) throw new Error(`${key}长度不能超过${PRODUCT_LIMITS[key]}个字符`);
   }
   if (!result.name) throw new Error("商品名称不能为空");
   return result;
@@ -64,6 +59,7 @@ exports.main = async (event) => {
     let currentProduct;
     try { currentProduct = (await db.collection("products").doc(productId).get()).data; } catch (_) { currentProduct = null; }
     if (!currentProduct) return fail("PRODUCT_NOT_FOUND", "商品不存在");
+    if (currentProduct.enabled !== true || currentProduct.status === "archived") return fail("PRODUCT_ARCHIVED", "归档商品不能直接编辑，请先在归档中恢复");
     let productInput, variantsInput;
     try { productInput = normalizeProduct(input.product); variantsInput = normalizeVariants(input.variants, currentProduct.hasVariants === true); }
     catch (error) { return fail("INVALID_PARAMETER", error.message); }

@@ -31,10 +31,11 @@ exports.main = async (event) => {
     if (!Number.isSafeInteger(page) || page < 1 || !Number.isSafeInteger(pageSize) || pageSize < 1) return fail("INVALID_PARAMETER", "分页参数无效");
 
     if (keyword && /^\d{6,64}$/.test(keyword)) {
-      const result = await db.collection("product_variants").where({ barcode:keyword }).limit(1).get();
+      const result = await db.collection("product_variants").where({ barcode:keyword, enabled:true }).limit(1).get();
       if (result.data.length) {
         const variant = result.data[0];
         const product = (await db.collection("products").doc(variant.productId).get()).data;
+        if (!product || product.enabled !== true) return { success:true, data:{ list:[], page, pageSize, hasMore:false }, message:"" };
         const variants = (await db.collection("product_variants").where({ productId:variant.productId }).orderBy("variantCode", "asc").limit(50).get()).data;
         return { success:true, data:{ list:[summarize(product, variants, variant.specification ? [variant.specification] : [])], page, pageSize, hasMore:false }, message:"" };
       }
@@ -42,10 +43,10 @@ exports.main = async (event) => {
 
     let variantMatches = [];
     if (keyword) {
-      variantMatches = (await db.collection("product_variants").where({ specification:db.RegExp({ regexp:escapeRegex(keyword), options:"i" }) }).limit(100).get()).data;
+      variantMatches = (await db.collection("product_variants").where({ specification:db.RegExp({ regexp:escapeRegex(keyword), options:"i" }), enabled:true }).limit(100).get()).data;
     }
     const variantProductIds = [...new Set(variantMatches.map((item) => item.productId))];
-    let productWhere = {};
+    let productWhere = { enabled:true };
     if (keyword) {
       const safe = escapeRegex(keyword);
       const conditions = [
@@ -54,7 +55,7 @@ exports.main = async (event) => {
         { supplier:db.RegExp({ regexp:safe, options:"i" }) },
       ];
       if (variantProductIds.length) conditions.push({ _id:_.in(variantProductIds) });
-      productWhere = _.or(conditions);
+      productWhere = _.and([{ enabled:true }, _.or(conditions)]);
     }
     const products = await db.collection("products").where(productWhere).orderBy("createdAt", "desc").skip((page - 1) * pageSize).limit(pageSize + 1).get();
     const hasMore = products.data.length > pageSize;

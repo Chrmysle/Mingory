@@ -169,6 +169,8 @@ async function testSalesPaginationAndSnapshot() {
   const getSales = loadCloudFunction("getSales", sdk);
   const page1 = await getSales({ startTime: start, endTime: end, page: 1, pageSize: 20 });
   const page2 = await getSales({ startTime: start, endTime: end, page: 2, pageSize: 20 });
+  const cancelledPage = await getSales({ startTime: start, endTime: end, status: "cancelled", page: 1, pageSize: 20 });
+  const allPage = await getSales({ startTime: start, endTime: end, status: "all", page: 1, pageSize: 30 });
   assert.equal(page1.data.list.length, 20);
   assert.equal(page1.data.hasMore, true);
   assert.equal(page2.data.list.length, 6);
@@ -176,6 +178,9 @@ async function testSalesPaginationAndSnapshot() {
   const ids = [...page1.data.list, ...page2.data.list].map((item) => item._id);
   assert.equal(new Set(ids).size, 26);
   assert.equal(ids.includes("CANCELLED"), false);
+  assert.equal(cancelledPage.data.list.length, 1);
+  assert.equal(cancelledPage.data.list[0].status, "cancelled");
+  assert.equal(allPage.data.list.some((item) => item._id === "CANCELLED"), true);
   const grouped = [...page1.data.list, ...page2.data.list].find((item) => item._id === "SALE_MULTI_DETAIL");
   assert.equal(grouped.itemCount, 2);
   assert.equal(grouped.totalAmountCent, 15900);

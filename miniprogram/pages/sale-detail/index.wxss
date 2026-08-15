@@ -2,6 +2,7 @@
 .sale-header { position: relative; }
 .name { padding-right: 130rpx; font-size: 39rpx; font-weight: 700; }
 .status { position: absolute; top: 28rpx; right: 28rpx; padding: 5rpx 13rpx; border-radius: 999rpx; color: var(--color-success); font-size: 22rpx; background: var(--color-success-soft); }
+.status.cancelled { color: var(--color-danger); background: var(--color-danger-soft); }
 .order-summary { margin-top: 8rpx; color: var(--color-text-secondary); }
 .amount { margin-top: 26rpx; padding-top: 22rpx; border-top: 1rpx solid var(--color-border); font-size: 48rpx; font-weight: 700; }
 .amount-caption { color: var(--color-text-tertiary); font-size: 23rpx; }
@@ -20,3 +21,4 @@
 .profit text:last-child { color: var(--color-success); font-size: 31rpx; font-weight: 700; }
 .profit.negative text:last-child { color: var(--color-danger); }
 .record-id { margin-top: 18rpx; color: var(--color-text-tertiary); font-size: 22rpx; word-break: break-all; }
+.cancel-button { color: var(--color-danger); background: var(--color-danger-soft); }

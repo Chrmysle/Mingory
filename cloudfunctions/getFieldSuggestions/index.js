@@ -3,6 +3,7 @@ const cloud = require("wx-server-sdk");
 cloud.init({ env: cloud.DYNAMIC_CURRENT_ENV });
 
 const db = cloud.database();
+const _ = db.command;
 const ALLOWED_FIELDS = ["supplier", "unit", "shelfLocation", "specification"];
 const PLATFORM_FIELDS = ["userInfo", "tcbContext"];
 const fail = (code, message) => ({ success: false, code, message });
@@ -26,17 +27,42 @@ exports.main = async (event) => {
     const keyword = String(input.keyword || "").trim().toLocaleLowerCase();
     const limit = Math.min(Math.max(Number(input.limit) || 6, 1), 10);
 
-    // 公共字段来自 products；具体规格来自 product_variants。
-    const collectionName = field === "specification" ? "product_variants" : "products";
-    const records = await db.collection(collectionName)
-      .orderBy("updatedAt", "desc")
-      .limit(100)
-      .field({ [field]: true })
-      .get();
+    // 公共字段来自启用中的 Product；规格只从启用 Product 所属的 Variant 提取。
+    // Product 与 Variant 分批组合，避免逐个 Product 查询造成 N+1。
+    let source = [];
+    if (field !== "specification") {
+      const records = await db.collection("products")
+        .where({ enabled: true })
+        .orderBy("updatedAt", "desc")
+        .limit(100)
+        .field({ [field]: true, updatedAt: true })
+        .get();
+      source = records.data;
+    } else {
+      const products = await db.collection("products")
+        .where({ enabled: true })
+        .orderBy("updatedAt", "desc")
+        .limit(100)
+        .field({ _id: true })
+        .get();
+      const productIds = products.data.map((item) => item._id);
+      const batches = [];
+      for (let index = 0; index < productIds.length; index += 20) {
+        batches.push(db.collection("product_variants")
+          .where({ productId: _.in(productIds.slice(index, index + 20)) })
+          .limit(100)
+          .field({ specification: true, updatedAt: true })
+          .get());
+      }
+      const results = await Promise.all(batches);
+      source = results.flatMap((result) => result.data)
+        .sort((left, right) => new Date(right.updatedAt || 0).getTime() - new Date(left.updatedAt || 0).getTime())
+        .slice(0, 100);
+    }
 
     const seen = new Set();
     const suggestions = [];
-    for (const record of records.data) {
+    for (const record of source) {
       const value = typeof record[field] === "string" ? record[field].trim() : "";
       const normalized = value.toLocaleLowerCase();
       if (!value || seen.has(normalized) || (keyword && !normalized.includes(keyword))) continue;

@@ -23,7 +23,6 @@
     <view class="field"><suggestion-input label="货架位置" field="shelfLocation" value="{{product.shelfLocation}}" placeholder="可不填" data-field="shelfLocation" bind:change="onProductSuggestion"/></view>
     <view class="field"><text>商品图片</text><button class="upload-button secondary-button" bindtap="chooseImage">{{product.imageFileID?'重新上传':'选择图片'}}</button><image wx:if="{{product.imageFileID}}" class="preview" src="{{product.imageFileID}}" mode="aspectFill"/></view>
     <view class="field"><text>备注</text><textarea data-field="remark" value="{{product.remark}}" bindinput="onProductInput" placeholder="可不填"/></view>
-    <view class="enabled-row product-enabled"><view><view>启用商品</view><view class="section-caption">停用后全部规格都不能销售</view></view><switch checked="{{product.enabled}}" bindchange="onProductEnabled" color="#1769e0"/></view>
   </view>
   <button class="submit primary-button" bindtap="submit" loading="{{submitting}}" disabled="{{submitting||uploading}}">保存修改</button>
 </view>

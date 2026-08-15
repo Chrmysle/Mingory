@@ -4,6 +4,8 @@ const { scanProduct } = require("../../utils/scan-product");
 
 Page({
   data: { keyword: "", list: [], page: 1, hasMore: false, loading: false, searched: false, error: "" },
+  onShow() { if (this.hidden && this.data.searched) this.search(true); this.hidden = false; },
+  onHide() { this.hidden = true; },
   onInput(e) { this.setData({ keyword: e.detail.value }); },
   submit() { this.search(true); },
   onReachBottom() { if (this.data.searched) this.search(false); },

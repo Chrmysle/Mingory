@@ -1,6 +1,6 @@
 const PRODUCT_FIELDS = Object.freeze([
   "_id", "productCode", "name", "unit", "supplier", "imageFileID",
-  "shelfLocation", "remark", "enabled", "hasVariants", "createdBy",
+  "shelfLocation", "remark", "enabled", "status", "archivedAt", "archivedBy", "archivedByName", "hasVariants", "createdBy",
   "createdByName", "updatedBy", "updatedByName", "createdAt", "updatedAt",
 ]);
 
